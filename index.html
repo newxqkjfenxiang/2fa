@@ -1,165 +1,353 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>纯前端 TOTP 2FA 验证码生成器</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/otplib@12.0.1/otplib-browser.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TOTP Generator</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+body{
+    margin:0;
+    background:#f3f4f6;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    color:#222;
+}
+
+.card{
+    width:420px;
+    max-width:95%;
+    background:white;
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
+
+h1{
+    margin:0 0 25px;
+    text-align:center;
+    font-size:28px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.inputWrap{
+    position:relative;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    padding-right:55px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+}
+
+.toggle{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    user-select:none;
+    color:#666;
+}
+
+.code{
+    text-align:center;
+    font-size:48px;
+    font-weight:700;
+    margin:35px 0 15px;
+    letter-spacing:4px;
+}
+
+.timer{
+    text-align:center;
+    font-size:18px;
+    color:#555;
+}
+
+.bar{
+    width:100%;
+    height:10px;
+    background:#ddd;
+    border-radius:999px;
+    margin-top:14px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    background:#4f46e5;
+    width:100%;
+    transition:width 1s linear;
+}
+
+button{
+    margin-top:25px;
+    width:100%;
+    padding:13px;
+    border:none;
+    background:#4f46e5;
+    color:white;
+    border-radius:10px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.92;
+}
+
+.status{
+    text-align:center;
+    margin-top:15px;
+    color:#d00;
+    min-height:20px;
+}
+
+.footer{
+    margin-top:25px;
+    text-align:center;
+    color:#888;
+    font-size:13px;
+}
+
+@media (prefers-color-scheme:dark){
+
+body{
+background:#111827;
+color:white;
+}
+
+.card{
+background:#1f2937;
+}
+
+input{
+background:#111827;
+border:1px solid #374151;
+color:white;
+}
+
+.bar{
+background:#374151;
+}
+
+}
+</style>
+
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+<body>
 
-    <div class="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700">
-        <h1 class="text-2xl font-bold text-center mb-2 text-indigo-400">TOTP 2FA 生成器</h1>
-        <p class="text-xs text-gray-400 text-center mb-6">纯前端本地计算 · 绝不上传数据</p>
+<div class="card">
 
-        <div class="mb-6">
-            <label for="secretInput" class="block text-sm font-medium text-gray-300 mb-2">输入 Base32 密钥 (Secret)</label>
-            <input 
-                type="text" 
-                id="secretInput" 
-                placeholder="例如: JBSWY3DPEHPK3PXP" 
-                class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-500 font-mono tracking-wider uppercase text-center"
-            >
-            <p id="errorMessage" class="text-red-400 text-xs mt-2 hidden text-center">无效的 Base32 密钥，请检查输入</p>
-        </div>
+<h1>🔐 TOTP Generator</h1>
 
-        <div class="bg-gray-950 rounded-xl p-6 border border-gray-800 text-center hidden" id="resultContainer">
-            <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">当前动态验证码</div>
-            
-            <div id="authCode" class="text-5xl font-mono font-bold text-indigo-400 tracking-widest my-4 cursor-pointer hover:text-indigo-300 transition-colors" title="点击复制">
-                ------
-            </div>
+<label>Base32 Secret</label>
 
-            <div class="mt-4">
-                <div class="flex justify-between text-xs text-gray-400 mb-1 px-1">
-                    <span>每 30 秒更新</span>
-                    <span id="countdownText">剩余 -- 秒</span>
-                </div>
-                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                    <div id="progressBar" class="bg-indigo-500 h-full w-full transition-all duration-1000 ease-linear"></div>
-                </div>
-            </div>
-        </div>
+<div class="inputWrap">
+<input id="secret" type="password" autocomplete="off" spellcheck="false">
+<div class="toggle" id="toggle">👁</div>
+</div>
 
-        <div id="placeholderText" class="text-center text-gray-500 text-sm py-8 border border-dashed border-gray-700 rounded-xl">
-            请在上方输入密钥以生成验证码
-        </div>
-    </div>
+<div class="code" id="code">------</div>
 
-    <footer class="mt-8 text-xs text-gray-600 text-center">
-        安全提示：本工具完全在您的浏览器本地运行，不会向外发送任何网络请求。
-    </footer>
+<div class="timer">
+<span id="remain">30</span>s remaining
+</div>
 
-    <script>
-        // 配置 otplib 使用 crypto-js 作为加密驱动
-        const { totp } = window.otplib;
-        totp.options = { crypto: CryptoJS };
+<div class="bar">
+<div class="fill" id="fill"></div>
+</div>
 
-        // 获取 DOM 元素
-        const secretInput = document.getElementById('secretInput');
-        const resultContainer = document.getElementById('resultContainer');
-        const placeholderText = document.getElementById('placeholderText');
-        const authCodeEl = document.getElementById('authCode');
-        const countdownTextEl = document.getElementById('countdownText');
-        const progressBarEl = document.getElementById('progressBar');
-        const errorMessageEl = document.getElementById('errorMessage');
+<button id="copy">Copy Code</button>
 
-        let timer = null;
+<div class="status" id="status"></div>
 
-        // 处理输入逻辑
-        secretInput.addEventListener('input', (e) => {
-            // 自动去除空格并转为大写
-            const secret = e.target.value.replace(/\s+/g, '').toUpperCase();
-            
-            if (!secret) {
-                resetUI();
-                return;
-            }
+<div class="footer">
+Everything runs locally in your browser.<br>
+Nothing is uploaded or stored.
+</div>
 
-            // 简单验证 Base32 格式 (A-Z, 2-7)
-            const base32Regex = /^[A-Z2-7]+=*$/;
-            if (!base32Regex.test(secret)) {
-                showError();
-                return;
-            }
+</div>
 
-            // 输入合法，开始启动定时更新
-            errorMessageEl.classList.add('hidden');
-            placeholderText.classList.add('hidden');
-            resultContainer.classList.remove('hidden');
+<script>
 
-            // 启动定时器
-            if (timer) clearInterval(timer);
-            updateTOTP(secret); // 立即执行一次
-            timer = setInterval(() => updateTOTP(secret), 1000);
-        });
+const alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
-        // 核心更新逻辑
-        function updateTOTP(secret) {
-            try {
-                // 1. 计算当前 30 秒周期内的剩余时间
-                const epoch = Math.floor(Date.now() / 1000);
-                const timeStep = 30;
-                const remainingSeconds = timeStep - (epoch % timeStep);
+function base32Decode(input){
 
-                // 2. 使用 otplib 生成 6 位验证码
-                const code = totp.generate(secret);
-                
-                // 3. 更新 UI
-                authCodeEl.textContent = code.slice(0, 3) + ' ' + code.slice(3); // 加空格方便阅读
-                countdownTextEl.textContent = `剩余 ${remainingSeconds} 秒`;
-                
-                // 4. 更新进度条百分比
-                const percent = (remainingSeconds / timeStep) * 100;
-                progressBarEl.style.width = `${percent}%`;
+input=input.toUpperCase().replace(/[\s-]/g,"");
 
-                // 临近过期变红提示
-                if (remainingSeconds <= 5) {
-                    progressBarEl.className = "bg-red-500 h-full w-full transition-all duration-1000 ease-linear";
-                } else {
-                    progressBarEl.className = "bg-indigo-500 h-full w-full transition-all duration-1000 ease-linear";
-                }
+let bits="";
 
-            } catch (err) {
-                // 如果库在解析 Base32 时报错，说明密钥真的有问题
-                showError();
-            }
-        }
+for(const c of input){
 
-        function resetUI() {
-            if (timer) clearInterval(timer);
-            placeholderText.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            errorMessageEl.classList.add('hidden');
-        }
+const val=alphabet.indexOf(c);
 
-        function showError() {
-            if (timer) clearInterval(timer);
-            errorMessageEl.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            placeholderText.classList.add('hidden');
-        }
+if(val===-1)
+throw new Error();
 
-        // 点击验证码自动复制功能
-        authCodeEl.addEventListener('click', () => {
-            const rawCode = authCodeEl.textContent.replace(' ', '');
-            if (rawCode && rawCode !== '------') {
-                navigator.clipboard.writeText(rawCode).then(() => {
-                    const originalText = authCodeEl.innerHTML;
-                    authCodeEl.textContent = "已复制！";
-                    authCodeEl.classList.remove('text-indigo-400');
-                    authCodeEl.classList.add('text-green-400');
-                    
-                    setTimeout(() => {
-                        authCodeEl.textContent = rawCode.slice(0, 3) + ' ' + rawCode.slice(3);
-                        authCodeEl.classList.remove('text-green-400');
-                        authCodeEl.classList.add('text-indigo-400');
-                    }, 1000);
-                });
-            }
-        });
-    </script>
+bits+=val.toString(2).padStart(5,"0");
+
+}
+
+const bytes=[];
+
+for(let i=0;i+8<=bits.length;i+=8){
+
+bytes.push(parseInt(bits.substring(i,i+8),2));
+
+}
+
+return new Uint8Array(bytes);
+
+}
+
+async function generate(secret){
+
+const keyBytes=base32Decode(secret);
+
+const epoch=Math.floor(Date.now()/1000);
+
+const counter=Math.floor(epoch/30);
+
+const buf=new ArrayBuffer(8);
+
+const view=new DataView(buf);
+
+view.setUint32(4,counter);
+
+const key=await crypto.subtle.importKey(
+"raw",
+keyBytes,
+{
+name:"HMAC",
+hash:"SHA-1"
+},
+false,
+["sign"]
+);
+
+const hmac=await crypto.subtle.sign("HMAC",key,buf);
+
+const hash=new Uint8Array(hmac);
+
+const offset=hash[19]&15;
+
+const code=((hash[offset]&127)<<24)
+|((hash[offset+1]&255)<<16)
+|((hash[offset+2]&255)<<8)
+|(hash[offset+3]&255);
+
+return (code%1000000).toString().padStart(6,"0");
+
+}
+
+const secret=document.getElementById("secret");
+const code=document.getElementById("code");
+const remain=document.getElementById("remain");
+const fill=document.getElementById("fill");
+const status=document.getElementById("status");
+
+let lastCounter=-1;
+
+async function refresh(){
+
+const text=secret.value.trim();
+
+const sec=30-(Math.floor(Date.now()/1000)%30);
+
+remain.textContent=sec;
+
+fill.style.width=(sec/30*100)+"%";
+
+if(!text){
+
+code.textContent="------";
+status.textContent="";
+return;
+
+}
+
+const counter=Math.floor(Date.now()/30000);
+
+if(counter===lastCounter)
+return;
+
+lastCounter=counter;
+
+try{
+
+const c=await generate(text);
+
+code.textContent=c.slice(0,3)+" "+c.slice(3);
+
+status.textContent="";
+
+}catch{
+
+code.textContent="------";
+status.textContent="Invalid Base32 Secret";
+
+}
+
+}
+
+setInterval(refresh,1000);
+
+secret.addEventListener("input",()=>{
+
+lastCounter=-1;
+
+refresh();
+
+});
+
+refresh();
+
+document.getElementById("toggle").onclick=()=>{
+
+secret.type=secret.type==="password"?"text":"password";
+
+};
+
+document.getElementById("copy").onclick=()=>{
+
+const txt=code.textContent.replace(/\s/g,"");
+
+if(txt==="------") return;
+
+navigator.clipboard.writeText(txt);
+
+status.style.color="#16a34a";
+
+status.textContent="Copied!";
+
+setTimeout(()=>{
+
+status.style.color="#d00";
+
+status.textContent="";
+
+},1000);
+
+};
+
+</script>
+
 </body>
 </html>
