@@ -1,908 +1,887 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Offline Security Toolkit</title>
-<style>
-  :root{
-    --bg:#f2f4f3;
-    --panel:#ffffff;
-    --ink:#1c2624;
-    --ink-soft:#5b6864;
-    --line:#dde3e0;
-    --accent:#1f6f5c;
-    --accent-soft:#e4f0ec;
-    --mono: "SFMono-Regular", Consolas, "Roboto Mono", Menlo, Monaco, monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    --radius: 10px;
-    --danger:#b3432b;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Security Toolkit</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:
-      linear-gradient(180deg, rgba(31,111,92,0.05), rgba(31,111,92,0) 260px),
-      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(31,111,92,0.035) 40px);
-    background-color:var(--bg);
-    color:var(--ink);
-    font-family:var(--sans);
-    min-height:100vh;
-    padding:32px 18px 60px;
-  }
+        :root {
+            --paper: #eef1ec;
+            --panel: #ffffff;
+            --ink: #16211c;
+            --ink-soft: #5c6b61;
+            --line: #d9e0d8;
+            --vault: #1f6f5c;
+            --vault-soft: #e2efe9;
+            --brass: #b9893e;
+            --warn: #b9893e;
+            --alarm: #c8412b;
+            --glow-safe: rgba(31, 111, 92, 0.30);
+            --glow-warn: rgba(185, 137, 62, 0.40);
+            --glow-danger: rgba(200, 65, 43, 0.55);
+            --mono: ui-monospace, 'SF Mono', 'Space Grotesk', Menlo, Consolas, monospace;
+        }
 
-  .wrap{max-width:1040px;margin:0 auto;}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  header.top{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:16px;
-    margin-bottom:28px;
-    flex-wrap:wrap;
-    border-bottom:1px solid var(--line);
-    padding-bottom:18px;
-  }
-  header.top .brand{display:flex; align-items:center; gap:10px;}
-  header.top .brand .dot{
-    width:10px;height:10px;border-radius:50%;
-    background:var(--accent);
-    box-shadow:0 0 0 4px var(--accent-soft);
-  }
-  header.top h1{
-    font-size:20px;
-    margin:0;
-    letter-spacing:0.2px;
-    font-weight:700;
-  }
-  header.top .tag{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--ink-soft);
-    background:var(--accent-soft);
-    padding:5px 10px;
-    border-radius:999px;
-    white-space:nowrap;
-  }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background:
+                radial-gradient(1200px 400px at 50% -10%, rgba(31,111,92,0.06), transparent),
+                repeating-linear-gradient(90deg, transparent, transparent 41px, rgba(22,33,28,0.025) 42px),
+                var(--paper);
+            color: var(--ink);
+            min-height: 100vh;
+            padding: 28px 18px 48px;
+        }
 
-  .grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:22px;
-  }
-  @media (max-width:860px){
-    .grid{grid-template-columns:1fr;}
-  }
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+            background: var(--panel);
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            box-shadow: 0 30px 60px -30px rgba(22,33,28,0.25);
+            overflow: hidden;
+            animation: rise 0.5s cubic-bezier(0.16,1,0.3,1);
+        }
 
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding:22px 22px 20px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-  }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-  .card h2{
-    margin:0;
-    font-size:15px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    letter-spacing:0.2px;
-  }
-  .card h2 .icon{font-size:17px;}
-  .card .sub{
-    margin:-10px 0 0;
-    font-size:12.5px;
-    color:var(--ink-soft);
-  }
+        header {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 60%),
+                linear-gradient(135deg, #16332b, #1f6f5c 60%, #245e4f);
+            color: #f3f6f2;
+            padding: 2.1rem 2rem 1.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brass), transparent 70%);
+            opacity: 0.85;
+        }
 
-  /* ---- Password field ---- */
-  .pw-display-row{
-    display:flex;
-    gap:8px;
-    align-items:stretch;
-  }
-  .pw-display{
-    flex:1;
-    font-family:var(--mono);
-    font-size:18px;
-    letter-spacing:0.5px;
-    background:var(--accent-soft);
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:12px 14px;
-    cursor:pointer;
-    user-select:all;
-    word-break:break-all;
-    display:flex;
-    align-items:center;
-    min-height:24px;
-    transition:background 0.15s ease;
-  }
-  .pw-display:hover{background:#dcece5;}
-  .icon-btn{
-    border:1px solid var(--line);
-    background:var(--panel);
-    border-radius:8px;
-    width:44px;
-    min-width:44px;
-    font-size:16px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:background 0.15s ease, transform 0.08s ease;
-    color:var(--ink);
-  }
-  .icon-btn:hover{background:var(--accent-soft);}
-  .icon-btn:active{transform:scale(0.94);}
+        .header-title { display: flex; align-items: center; gap: 14px; }
+        .header-mark {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+        }
+        .subtitle {
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: rgba(243,246,242,0.75);
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+        }
+        .badge {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.4px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.28);
+            color: #f3f6f2;
+            padding: 7px 13px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
 
-  .field-row{display:flex; flex-direction:column; gap:6px;}
-  .slider-label{
-    display:flex; justify-content:space-between;
-    font-size:12.5px; color:var(--ink-soft);
-    font-family:var(--mono);
-  }
-  input[type="range"]{
-    -webkit-appearance:none;
-    width:100%;
-    height:4px;
-    border-radius:2px;
-    background:var(--line);
-    outline:none;
-  }
-  input[type="range"]::-webkit-slider-thumb{
-    -webkit-appearance:none;
-    width:18px;height:18px;
-    border-radius:50%;
-    background:var(--accent);
-    cursor:pointer;
-    border:3px solid #fff;
-    box-shadow:0 0 0 1px var(--accent);
-  }
-  input[type="range"]::-moz-range-thumb{
-    width:16px;height:16px;
-    border-radius:50%;
-    background:var(--accent);
-    cursor:pointer;
-    border:3px solid #fff;
-    box-shadow:0 0 0 1px var(--accent);
-  }
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--line);
+        }
 
-  .checks{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:8px;
-  }
-  @media (max-width:420px){
-    .checks{grid-template-columns:repeat(2,1fr);}
-  }
-  .chk{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    font-family:var(--mono);
-    font-size:13px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:8px 9px;
-    cursor:pointer;
-    user-select:none;
-    transition:border-color 0.15s ease, background 0.15s ease;
-  }
-  .chk.active{border-color:var(--accent); background:var(--accent-soft);}
-  .chk input{accent-color:var(--accent); width:14px;height:14px;}
+        .section {
+            background: var(--panel);
+            padding: 2rem 2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+        }
 
-  .hint{
-    font-size:12px;
-    color:var(--danger);
-    min-height:14px;
-  }
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 1.2px;
+            color: var(--brass);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
 
-  /* ---- TOTP ---- */
-  .totp-input{
-    font-family:var(--mono);
-    font-size:14px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:11px 12px;
-    background:var(--panel);
-    color:var(--ink);
-    width:100%;
-    outline:none;
-  }
-  .totp-input:focus{border-color:var(--accent);}
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.4rem;
+            padding-bottom: 1.1rem;
+            border-bottom: 1px solid var(--line);
+        }
 
-  .totp-display-wrap{
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
-  .totp-code{
-    font-family:var(--mono);
-    font-size:34px;
-    letter-spacing:6px;
-    font-weight:700;
-    background:var(--accent-soft);
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:12px 16px;
-    cursor:pointer;
-    flex:1;
-    text-align:center;
-    user-select:all;
-  }
-  .totp-code.placeholder{
-    color:var(--ink-soft);
-    letter-spacing:2px;
-    font-size:15px;
-    font-weight:400;
-  }
-  .totp-side{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-    min-width:64px;
-  }
-  .ring{
-    position:relative;
-    width:44px;height:44px;
-  }
-  .ring svg{transform:rotate(-90deg);}
-  .ring circle{
-    fill:none;
-    stroke-width:4;
-  }
-  .ring .bg{stroke:var(--line);}
-  .ring .fg{stroke:var(--accent); stroke-linecap:round; transition:stroke-dashoffset 1s linear;}
-  .ring-label{
-    position:absolute; inset:0;
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:11px; color:var(--ink-soft);
-  }
-  .refresh-txt{font-size:11px; color:var(--ink-soft); font-family:var(--mono);}
+        .section-icon {
+            width: 38px; height: 38px;
+            border-radius: 9px;
+            background: var(--vault-soft);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
 
-  /* ---- history ---- */
-  .history{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-  }
-  .history-title{
-    font-size:11.5px;
-    text-transform:uppercase;
-    letter-spacing:0.6px;
-    color:var(--ink-soft);
-    margin-top:2px;
-  }
-  .hist-item{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:8px 10px;
-    cursor:pointer;
-    background:var(--panel);
-  }
-  .hist-item:hover{background:var(--accent-soft);}
-  .hist-main{
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-    overflow:hidden;
-  }
-  .hist-val{
-    font-family:var(--mono);
-    font-size:13px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .hist-time{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--ink-soft);
-  }
-  .hist-copy{
-    border:none;
-    background:transparent;
-    cursor:pointer;
-    font-size:14px;
-    padding:4px 6px;
-    border-radius:6px;
-    color:var(--ink-soft);
-  }
-  .hist-copy:hover{background:var(--line); color:var(--ink);}
-  .hist-empty{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--ink-soft);
-    padding:8px 2px;
-  }
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
 
-  /* ---- toast ---- */
-  .toast{
-    position:fixed;
-    bottom:26px;
-    left:50%;
-    transform:translateX(-50%) translateY(10px);
-    background:var(--ink);
-    color:#fff;
-    font-family:var(--mono);
-    font-size:13px;
-    padding:9px 18px;
-    border-radius:999px;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.18s ease, transform 0.18s ease;
-    z-index:50;
-  }
-  .toast.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-  }
+        .password-display {
+            background: var(--vault-soft);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 1.1rem 4.6rem 1.1rem 1.3rem;
+            font-family: var(--mono);
+            font-size: 1.25rem;
+            letter-spacing: 1px;
+            word-break: break-all;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: border-color 0.18s ease, background 0.18s ease;
+            position: relative;
+        }
+        .password-display:hover { border-color: var(--vault); background: #dcede5; }
 
-  footer.note{
-    margin-top:30px;
-    padding-top:18px;
-    border-top:1px solid var(--line);
-    font-size:12.5px;
-    line-height:1.7;
-    color:var(--ink-soft);
-    text-align:center;
-  }
-  footer.note strong{color:var(--ink);}
-</style>
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--panel);
+            border: 1px solid var(--line);
+            color: var(--ink-soft);
+            padding: 7px 13px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.18s ease;
+        }
+        .copy-btn:hover { background: var(--vault); border-color: var(--vault); color: #fff; }
+
+        .controls { margin: 1.4rem 0; }
+        .slider-container { margin-bottom: 1.4rem; }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.92rem;
+        }
+        input[type="range"] { width: 100%; accent-color: var(--vault); }
+        .length-value {
+            font-family: var(--mono);
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--vault);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 1.4rem;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 9px 11px;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .checkbox-item:has(input:checked) { border-color: var(--vault); background: var(--vault-soft); }
+        .checkbox-item input { accent-color: var(--vault); width: 15px; height: 15px; }
+
+        #generate-btn {
+            flex: 1;
+            padding: 13px;
+            background: var(--vault);
+            color: #fff;
+            border: none;
+            border-radius: 11px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.18s ease, transform 0.08s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        #generate-btn:hover { background: #185a4a; }
+        #generate-btn:active { transform: scale(0.985); }
+
+        .secret-input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            font-size: 0.95rem;
+            font-family: var(--mono);
+            margin-bottom: 1.1rem;
+            background: var(--panel);
+            color: var(--ink);
+            transition: border-color 0.15s ease;
+        }
+        .secret-input:focus { outline: none; border-color: var(--vault); }
+
+        .totp-display {
+            background: linear-gradient(135deg, #16332b, #1f6f5c);
+            color: #fff;
+            border-radius: 14px;
+            padding: 1.4rem;
+            font-size: 2.05rem;
+            font-family: var(--mono);
+            font-weight: 600;
+            letter-spacing: 7px;
+            text-align: center;
+            margin-bottom: 0.9rem;
+            cursor: pointer;
+            transition: box-shadow 0.4s ease;
+        }
+
+        .fuse-wrap { margin-bottom: 1.5rem; }
+        .fuse-track {
+            --intensity: 0;
+            position: relative;
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--vault-soft);
+            overflow: hidden;
+            box-shadow: 0 0 calc(var(--intensity) * 16px) calc(var(--intensity) * 2px) var(--glow-color, transparent);
+            transition: box-shadow 0.5s ease;
+        }
+        .fuse-fill {
+            height: 100%;
+            width: 100%;
+            border-radius: 999px;
+            background: var(--vault);
+            transition: width 1s linear, background-color 0.5s ease;
+        }
+        .fuse-track.safe   { --glow-color: var(--glow-safe); }
+        .fuse-track.warn   { --glow-color: var(--glow-warn); }
+        .fuse-track.warn .fuse-fill   { background: var(--warn); }
+        .fuse-track.danger { --glow-color: var(--glow-danger); }
+        .fuse-track.danger .fuse-fill { background: var(--alarm); }
+        .fuse-track.danger { animation: pulse-track 0.9s ease-in-out infinite; }
+
+        @keyframes pulse-track {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.6); }
+        }
+
+        .fuse-caption {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--ink-soft);
+            letter-spacing: 0.3px;
+        }
+
+        #copy-totp-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--vault);
+            color: #fff;
+            border: none;
+            border-radius: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: background 0.18s ease, transform 0.08s ease;
+        }
+        #copy-totp-btn:hover { background: #185a4a; }
+        #copy-totp-btn:active { transform: scale(0.985); }
+
+        .history { margin-top: auto; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+        .history-title {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--ink-soft);
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-family: var(--mono);
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .history-item:hover { background: var(--vault-soft); border-color: var(--vault); }
+        .history-time { font-size: 0.75rem; color: var(--ink-soft); }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: #fff;
+            padding: 11px 26px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-family: var(--mono);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 1000;
+        }
+        .toast.show { opacity: 1; }
+
+        footer {
+            text-align: center;
+            padding: 1.8rem 2rem;
+            background: var(--paper);
+            border-top: 1px solid var(--line);
+            color: var(--ink-soft);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+        footer p:first-child strong { color: var(--ink); }
+        footer p:last-child { margin-top: 10px; font-size: 0.78rem; font-family: var(--mono); color: var(--ink-soft); }
+
+        @media (max-width: 768px) {
+            .main { grid-template-columns: 1fr; }
+            h1 { font-size: 1.3rem; }
+            .password-display { padding-right: 1.3rem; flex-direction: column; align-items: flex-start; gap: 8px; }
+            .copy-btn { position: static; transform: none; margin-top: 10px; align-self: flex-start; }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <div class="header-mark">🔐</div>
+                <div>
+                    <h1>Offline Security Toolkit</h1>
+                    <div class="subtitle">纯前端 · 完全离线 · 本地安全工具</div>
+                </div>
+            </div>
+            <span class="badge">100% local · no network</span>
+        </header>
 
-<div class="wrap">
+        <div class="main">
+            <!-- 强密码生成器 -->
+            <div class="section">
+                <div class="eyebrow">Module 01</div>
+                <div class="section-header">
+                    <div class="section-icon">🔐</div>
+                    <h2 class="section-title">强密码生成器</h2>
+                </div>
 
-  <header class="top">
-    <div class="brand">
-      <span class="dot"></span>
-      <h1>Offline Security Toolkit</h1>
+                <div class="password-display" id="password-display">
+                    <span id="password-text">Loading...</span>
+                    <button class="copy-btn" id="copy-password-btn">
+                        📋 Copy
+                    </button>
+                </div>
+
+                <div class="controls">
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>密码长度</span>
+                            <span class="length-value" id="length-value">20</span>
+                        </div>
+                        <input type="range" id="length-slider"
+                               min="4" max="64" value="20" step="1">
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="upper" checked>
+                            <span>ABC 大写字母</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="lower" checked>
+                            <span>abc 小写字母</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="numbers" checked>
+                            <span>123 数字</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="special" checked>
+                            <span>#@! 特殊符号</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 2rem;">
+                    <button id="generate-btn">
+                        🔄 重新生成
+                    </button>
+                </div>
+
+                <!-- 历史记录 -->
+                <div class="history">
+                    <div class="history-title">最近复制的密码</div>
+                    <div class="history-list" id="password-history"></div>
+                </div>
+            </div>
+
+            <!-- TOTP 验证器 -->
+            <div class="section">
+                <div class="eyebrow">Module 02</div>
+                <div class="section-header">
+                    <div class="section-icon">🔑</div>
+                    <h2 class="section-title">TOTP 验证码</h2>
+                </div>
+
+                <input type="text" id="totp-secret"
+                       class="secret-input"
+                       placeholder="输入 Base32 Secret (例如: JBSWY3DPEHPK3PXP)"
+                       spellcheck="false">
+
+                <div class="totp-display" id="totp-display">
+                    <span id="totp-code">------</span>
+                </div>
+
+                <div class="fuse-wrap">
+                    <div class="fuse-track safe" id="fuse-track">
+                        <div class="fuse-fill" id="fuse-fill"></div>
+                    </div>
+                    <div class="fuse-caption">
+                        <span>刷新周期</span>
+                        <span>30s</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 1.5rem;">
+                    <button id="copy-totp-btn">
+                        📋 复制验证码
+                    </button>
+                </div>
+
+                <!-- 历史记录 -->
+                <div class="history">
+                    <div class="history-title">最近复制的验证码</div>
+                    <div class="history-list" id="totp-history"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>此工具完全离线运行。</strong>所有密码、TOTP 密钥、验证码及复制历史记录均仅在浏览器内存中处理，不会存储、上传或传输任何数据。刷新或关闭页面后，所有数据都会被永久清除。</p>
+            <p>使用 Web Crypto API 实现安全随机数与 HMAC-SHA1 · 符合 RFC 6238</p>
+        </footer>
     </div>
-    <span class="tag">100% local · no network · memory only</span>
-  </header>
-
-  <div class="grid">
-
-    <!-- ============ Password Generator ============ -->
-    <section class="card" id="pwCard">
-      <h2><span class="icon">🔐</span> Strong Password Generator</h2>
-      <p class="sub">生成高强度随机密码，使用 crypto.getRandomValues()</p>
-
-      <div class="pw-display-row">
-        <div class="pw-display" id="pwDisplay" title="点击复制"></div>
-        <button class="icon-btn" id="pwRefreshBtn" title="重新生成">🔄</button>
-        <button class="icon-btn" id="pwCopyBtn" title="复制">📋</button>
-      </div>
-
-      <div class="field-row">
-        <div class="slider-label">
-          <span>Length</span>
-          <span id="pwLenVal">20</span>
-        </div>
-        <input type="range" id="pwLength" min="4" max="64" value="20">
-      </div>
-
-      <div class="checks">
-        <label class="chk active" id="chkUpperWrap">
-          <input type="checkbox" id="chkUpper" checked> ABC
-        </label>
-        <label class="chk active" id="chkLowerWrap">
-          <input type="checkbox" id="chkLower" checked> abc
-        </label>
-        <label class="chk active" id="chkNumWrap">
-          <input type="checkbox" id="chkNum" checked> 123
-        </label>
-        <label class="chk active" id="chkSymWrap">
-          <input type="checkbox" id="chkSym" checked> #@!
-        </label>
-      </div>
-      <div class="hint" id="pwHint"></div>
-
-      <div class="history">
-        <div class="history-title">Recent Copies</div>
-        <div id="pwHistory"></div>
-      </div>
-    </section>
-
-    <!-- ============ TOTP ============ -->
-    <section class="card" id="totpCard">
-      <h2><span class="icon">🔑</span> TOTP Authenticator</h2>
-      <p class="sub">RFC 6238 · HMAC-SHA1 · 30s step · 6 位验证码</p>
-
-      <div class="field-row">
-        <input class="totp-input" id="totpSecret" placeholder="TOTP Secret，例如 JBSWY3DPEHPK3PXP" autocomplete="off" spellcheck="false">
-      </div>
-      <div class="hint" id="totpHint"></div>
-
-      <div class="totp-display-wrap">
-        <div class="totp-code placeholder" id="totpCode">------</div>
-        <div class="totp-side">
-          <div class="ring">
-            <svg width="44" height="44" viewBox="0 0 44 44">
-              <circle class="bg" cx="22" cy="22" r="18"></circle>
-              <circle class="fg" id="totpRing" cx="22" cy="22" r="18" stroke-dasharray="113.1" stroke-dashoffset="0"></circle>
-            </svg>
-            <div class="ring-label" id="totpSeconds">--</div>
-          </div>
-          <div class="refresh-txt">Refresh in</div>
-        </div>
-      </div>
-
-      <div class="history">
-        <div class="history-title">Recent Copies</div>
-        <div id="totpHistory"></div>
-      </div>
-    </section>
-
-  </div>
-
-  <footer class="note">
-    此工具完全离线运行。所有密码、TOTP 密钥、验证码及复制历史记录均仅在浏览器内存中处理，不会存储、上传或传输任何数据。<br>
-    <strong>刷新或关闭页面后，所有数据都会被永久清除。</strong>
-  </footer>
-
-</div>
-
-<div class="toast" id="toast">Copied!</div>
-
-<script>
-(function(){
-  "use strict";
-
-  /* ======================================================
-     Utility: toast
-  ====================================================== */
-  const toastEl = document.getElementById('toast');
-  let toastTimer = null;
-  function showToast(msg){
-    toastEl.textContent = msg || 'Copied!';
-    toastEl.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=>{ toastEl.classList.remove('show'); }, 1000);
-  }
-
-  function copyText(text){
-    if(!text) return;
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(()=>showToast('Copied!')).catch(()=>fallbackCopy(text));
-    } else {
-      fallbackCopy(text);
-    }
-  }
-  function fallbackCopy(text){
-    try{
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('Copied!');
-    }catch(e){ /* ignore */ }
-  }
-
-  function nowHHMMSS(){
-    const d = new Date();
-    const p = n => String(n).padStart(2,'0');
-    return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-  }
-
-  /* ======================================================
-     PASSWORD GENERATOR
-  ====================================================== */
-  const CHARSETS = {
-    upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    lower: 'abcdefghijklmnopqrstuvwxyz',
-    num:   '0123456789',
-    sym:   '!@#$%^&*()-_=+[]{}<>?~'
-  };
-
-  const pwDisplay = document.getElementById('pwDisplay');
-  const pwLength = document.getElementById('pwLength');
-  const pwLenVal = document.getElementById('pwLenVal');
-  const pwHint = document.getElementById('pwHint');
-  const pwRefreshBtn = document.getElementById('pwRefreshBtn');
-  const pwCopyBtn = document.getElementById('pwCopyBtn');
-  const pwHistoryEl = document.getElementById('pwHistory');
-
-  const chkUpper = document.getElementById('chkUpper');
-  const chkLower = document.getElementById('chkLower');
-  const chkNum = document.getElementById('chkNum');
-  const chkSym = document.getElementById('chkSym');
-  const chkMap = [
-    {input: chkUpper, wrap: document.getElementById('chkUpperWrap'), key:'upper'},
-    {input: chkLower, wrap: document.getElementById('chkLowerWrap'), key:'lower'},
-    {input: chkNum,   wrap: document.getElementById('chkNumWrap'),   key:'num'},
-    {input: chkSym,   wrap: document.getElementById('chkSymWrap'),   key:'sym'}
-  ];
-
-  let pwHistory = []; // {value, time}
-
-  function secureRandomInt(maxExclusive){
-    // Uniform random int in [0, maxExclusive) using rejection sampling
-    const arr = new Uint32Array(1);
-    const limit = Math.floor(0xFFFFFFFF / maxExclusive) * maxExclusive;
-    let x;
-    do{
-      crypto.getRandomValues(arr);
-      x = arr[0];
-    } while(x >= limit);
-    return x % maxExclusive;
-  }
-
-  function shuffleArray(arr){
-    for(let i = arr.length - 1; i > 0; i--){
-      const j = secureRandomInt(i + 1);
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function getActiveSets(){
-    return chkMap.filter(c => c.input.checked).map(c => c.key);
-  }
-
-  function updateCheckStyles(){
-    chkMap.forEach(c => {
-      c.wrap.classList.toggle('active', c.input.checked);
-    });
-  }
-
-  function generatePassword(){
-    const activeKeys = getActiveSets();
-    const length = parseInt(pwLength.value, 10);
-
-    if(activeKeys.length === 0){
-      pwDisplay.textContent = '';
-      return;
-    }
-
-    // Build combined pool
-    let pool = '';
-    activeKeys.forEach(k => pool += CHARSETS[k]);
-
-    const passwordChars = [];
-
-    // Ensure at least one char from each active set
-    activeKeys.forEach(k => {
-      const set = CHARSETS[k];
-      passwordChars.push(set[secureRandomInt(set.length)]);
-    });
-
-    // Fill remaining
-    const remaining = Math.max(0, length - passwordChars.length);
-    for(let i = 0; i < remaining; i++){
-      passwordChars.push(pool[secureRandomInt(pool.length)]);
-    }
-
-    // If length was smaller than number of active sets, trim (edge case, min length is 4 so fine mostly)
-    let finalChars = passwordChars;
-    if(finalChars.length > length){
-      shuffleArray(finalChars);
-      finalChars = finalChars.slice(0, length);
-    }
-
-    shuffleArray(finalChars);
-    pwDisplay.textContent = finalChars.join('');
-  }
-
-  function addPasswordToHistory(value){
-    // if already exists, remove old entry first
-    pwHistory = pwHistory.filter(item => item.value !== value);
-    pwHistory.unshift({ value, time: nowHHMMSS() });
-    if(pwHistory.length > 5) pwHistory = pwHistory.slice(0, 5);
-    renderPwHistory();
-  }
-
-  function renderPwHistory(){
-    pwHistoryEl.innerHTML = '';
-    if(pwHistory.length === 0){
-      const empty = document.createElement('div');
-      empty.className = 'hist-empty';
-      empty.textContent = '暂无记录';
-      pwHistoryEl.appendChild(empty);
-      return;
-    }
-    pwHistory.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'hist-item';
-
-      const main = document.createElement('div');
-      main.className = 'hist-main';
-      const val = document.createElement('div');
-      val.className = 'hist-val';
-      val.textContent = item.value;
-      const time = document.createElement('div');
-      time.className = 'hist-time';
-      time.textContent = item.time;
-      main.appendChild(val);
-      main.appendChild(time);
-
-      const btn = document.createElement('button');
-      btn.className = 'hist-copy';
-      btn.textContent = '📋';
-      btn.title = '再次复制';
-
-      function doCopy(){
-        copyText(item.value);
-        addPasswordToHistory(item.value); // moves to top with updated time
-      }
-      row.addEventListener('click', doCopy);
-      btn.addEventListener('click', (e)=>{ e.stopPropagation(); doCopy(); });
-
-      row.appendChild(main);
-      row.appendChild(btn);
-      pwHistoryEl.appendChild(row);
-    });
-  }
-
-  chkMap.forEach(c => {
-    c.input.addEventListener('change', () => {
-      const activeCount = getActiveSets().length;
-      if(activeCount === 0){
-        // prevent unchecking the last one
-        c.input.checked = true;
-        pwHint.textContent = 'At least one character set must be selected.';
-        setTimeout(()=>{ pwHint.textContent = ''; }, 2200);
-        return;
-      }
-      updateCheckStyles();
-      generatePassword();
-    });
-  });
-
-  pwLength.addEventListener('input', () => {
-    pwLenVal.textContent = pwLength.value;
-    generatePassword();
-  });
-
-  pwRefreshBtn.addEventListener('click', generatePassword);
-
-  pwDisplay.addEventListener('click', () => {
-    const val = pwDisplay.textContent;
-    if(!val) return;
-    copyText(val);
-    addPasswordToHistory(val);
-  });
-
-  pwCopyBtn.addEventListener('click', () => {
-    const val = pwDisplay.textContent;
-    if(!val) return;
-    copyText(val);
-    addPasswordToHistory(val);
-  });
-
-  /* ======================================================
-     TOTP AUTHENTICATOR (RFC 6238 / RFC 4226)
-  ====================================================== */
-  const totpSecretInput = document.getElementById('totpSecret');
-  const totpHint = document.getElementById('totpHint');
-  const totpCodeEl = document.getElementById('totpCode');
-  const totpSecondsEl = document.getElementById('totpSeconds');
-  const totpRing = document.getElementById('totpRing');
-  const totpHistoryEl = document.getElementById('totpHistory');
-
-  const RING_CIRC = 2 * Math.PI * 18; // ~113.097
-
-  let totpHistory = [];
-  let totpTimerHandle = null;
-  let currentValidSecret = null; // Uint8Array key bytes
-  let lastRenderedStep = null;
-
-  function base32Decode(input){
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-    const clean = input.toUpperCase().replace(/[^A-Z2-7]/g, '');
-    if(clean.length === 0) return null;
-
-    let bits = '';
-    for(let i = 0; i < clean.length; i++){
-      const idx = alphabet.indexOf(clean[i]);
-      if(idx === -1) return null;
-      bits += idx.toString(2).padStart(5, '0');
-    }
-
-    const bytes = [];
-    for(let i = 0; i + 8 <= bits.length; i += 8){
-      bytes.push(parseInt(bits.substring(i, i + 8), 2));
-    }
-    if(bytes.length === 0) return null;
-    return new Uint8Array(bytes);
-  }
-
-  function intToBytes(num){
-    // 8-byte big-endian counter
-    const buf = new ArrayBuffer(8);
-    const view = new DataView(buf);
-    // JS numbers safe up to 2^53; time counters fit in low 32 bits for a very long time
-    const high = Math.floor(num / 0x100000000);
-    const low = num >>> 0;
-    view.setUint32(0, high);
-    view.setUint32(4, low);
-    return new Uint8Array(buf);
-  }
-
-  async function hmacSha1(keyBytes, msgBytes){
-    const key = await crypto.subtle.importKey(
-      'raw',
-      keyBytes,
-      { name: 'HMAC', hash: 'SHA-1' },
-      false,
-      ['sign']
-    );
-    const sig = await crypto.subtle.sign('HMAC', key, msgBytes);
-    return new Uint8Array(sig);
-  }
-
-  async function generateTOTP(keyBytes, timeStep, digits){
-    const counter = Math.floor(Date.now() / 1000 / timeStep);
-    const counterBytes = intToBytes(counter);
-    const hmac = await hmacSha1(keyBytes, counterBytes);
-
-    const offset = hmac[hmac.length - 1] & 0x0f;
-    const binCode = ((hmac[offset] & 0x7f) << 24) |
-                     ((hmac[offset + 1] & 0xff) << 16) |
-                     ((hmac[offset + 2] & 0xff) << 8) |
-                     (hmac[offset + 3] & 0xff);
-
-    const codeInt = binCode % Math.pow(10, digits);
-    return String(codeInt).padStart(digits, '0');
-  }
-
-  function secondsRemaining(step){
-    const epoch = Math.floor(Date.now() / 1000);
-    return step - (epoch % step);
-  }
-
-  function setRingProgress(remaining, step){
-    const fraction = remaining / step;
-    const offset = RING_CIRC * (1 - fraction);
-    totpRing.style.strokeDashoffset = offset;
-  }
-
-  async function tickTOTP(){
-    const raw = totpSecretInput.value.trim();
-    const step = 30;
-
-    if(raw.length === 0){
-      totpCodeEl.textContent = '------';
-      totpCodeEl.classList.add('placeholder');
-      totpSecondsEl.textContent = '--';
-      setRingProgress(step, step);
-      totpHint.textContent = '';
-      currentValidSecret = null;
-      return;
-    }
-
-    const keyBytes = base32Decode(raw);
-    if(!keyBytes){
-      totpCodeEl.textContent = '------';
-      totpCodeEl.classList.add('placeholder');
-      totpSecondsEl.textContent = '--';
-      setRingProgress(step, step);
-      totpHint.textContent = 'Invalid Base32 secret.';
-      currentValidSecret = null;
-      return;
-    }
-
-    totpHint.textContent = '';
-    currentValidSecret = keyBytes;
-
-    const remaining = secondsRemaining(step);
-    totpSecondsEl.textContent = remaining + 's';
-    setRingProgress(remaining, step);
-
-    const currentStepIndex = Math.floor(Date.now() / 1000 / step);
-    if(currentStepIndex !== lastRenderedStep){
-      lastRenderedStep = currentStepIndex;
-      try{
-        const code = await generateTOTP(keyBytes, step, 6);
-        totpCodeEl.textContent = code;
-        totpCodeEl.classList.remove('placeholder');
-      }catch(e){
-        totpHint.textContent = 'Failed to compute TOTP.';
-      }
-    }
-  }
-
-  function addTotpToHistory(value){
-    totpHistory = totpHistory.filter(item => item.value !== value);
-    totpHistory.unshift({ value, time: nowHHMMSS() });
-    if(totpHistory.length > 5) totpHistory = totpHistory.slice(0, 5);
-    renderTotpHistory();
-  }
-
-  function renderTotpHistory(){
-    totpHistoryEl.innerHTML = '';
-    if(totpHistory.length === 0){
-      const empty = document.createElement('div');
-      empty.className = 'hist-empty';
-      empty.textContent = '暂无记录';
-      totpHistoryEl.appendChild(empty);
-      return;
-    }
-    totpHistory.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'hist-item';
-
-      const main = document.createElement('div');
-      main.className = 'hist-main';
-      const val = document.createElement('div');
-      val.className = 'hist-val';
-      val.textContent = item.value;
-      const time = document.createElement('div');
-      time.className = 'hist-time';
-      time.textContent = item.time;
-      main.appendChild(val);
-      main.appendChild(time);
-
-      const btn = document.createElement('button');
-      btn.className = 'hist-copy';
-      btn.textContent = '📋';
-      btn.title = '再次复制';
-
-      function doCopy(){
-        copyText(item.value);
-        addTotpToHistory(item.value);
-      }
-      row.addEventListener('click', doCopy);
-      btn.addEventListener('click', (e)=>{ e.stopPropagation(); doCopy(); });
-
-      row.appendChild(main);
-      row.appendChild(btn);
-      totpHistoryEl.appendChild(row);
-    });
-  }
-
-  function copyCurrentTotp(){
-    const code = totpCodeEl.textContent;
-    if(!currentValidSecret || totpCodeEl.classList.contains('placeholder')) return;
-    copyText(code);
-    addTotpToHistory(code);
-  }
-
-  totpCodeEl.addEventListener('click', copyCurrentTotp);
-  document.getElementById('totpCard').querySelector('h2'); // no-op guard
-  totpSecretInput.addEventListener('input', () => { lastRenderedStep = null; tickTOTP(); });
-
-  // TOTP copy button lives visually inline; add one next to the code via existing markup pattern
-  // (kept consistent with password card by adding a dedicated button)
-  (function addTotpCopyButton(){
-    const wrap = document.querySelector('.totp-display-wrap');
-    const btn = document.createElement('button');
-    btn.className = 'icon-btn';
-    btn.title = '复制';
-    btn.textContent = '📋';
-    btn.addEventListener('click', copyCurrentTotp);
-    wrap.insertBefore(btn, wrap.lastElementChild);
-  })();
-
-  setRingProgress(30, 30);
-  totpTimerHandle = setInterval(tickTOTP, 1000);
-
-  /* ======================================================
-     INIT
-  ====================================================== */
-  generatePassword();
-  updateCheckStyles();
-  renderPwHistory();
-  renderTotpHistory();
-
-})();
-</script>
 
+    <div class="toast" id="toast">Copied!</div>
+
+    <script>
+        // ==================== 全局变量 ====================
+        let passwordHistory = [];
+        let totpHistory = [];
+        let currentPassword = '';
+        let totpInterval = null;
+        let currentSecret = '';
+
+        // ==================== 工具函数 ====================
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1000);
+        }
+
+        function copyToClipboard(text) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Copied!');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Copied!');
+            });
+        }
+
+        function formatTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+        }
+
+        function addToHistory(historyArray, text, listElement, max = 5) {
+            const time = formatTime();
+            const existingIndex = historyArray.findIndex(item => item.text === text);
+            if (existingIndex !== -1) {
+                historyArray.splice(existingIndex, 1);
+            }
+
+            historyArray.unshift({ text, time });
+
+            if (historyArray.length > max) {
+                historyArray.pop();
+            }
+
+            renderHistory(historyArray, listElement);
+        }
+
+        function renderHistory(historyArray, container) {
+            container.innerHTML = '';
+
+            if (historyArray.length === 0) {
+                const empty = document.createElement('div');
+                empty.style.textAlign = 'center';
+                empty.style.color = '#94a3b8';
+                empty.style.padding = '20px 0';
+                empty.style.fontSize = '0.9rem';
+                empty.textContent = '暂无记录';
+                container.appendChild(empty);
+                return;
+            }
+
+            historyArray.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+
+                const content = document.createElement('div');
+                content.style.flex = '1';
+                content.textContent = item.text;
+
+                const time = document.createElement('div');
+                time.className = 'history-time';
+                time.textContent = item.time;
+
+                const copyIcon = document.createElement('button');
+                copyIcon.style.background = 'none';
+                copyIcon.style.border = 'none';
+                copyIcon.style.marginLeft = '12px';
+                copyIcon.style.cursor = 'pointer';
+                copyIcon.style.fontSize = '1.1rem';
+                copyIcon.textContent = '📋';
+
+                div.appendChild(content);
+                div.appendChild(time);
+                div.appendChild(copyIcon);
+
+                div.addEventListener('click', (e) => {
+                    if (e.target !== copyIcon) {
+                        copyToClipboard(item.text);
+                        addToHistory(historyArray, item.text, container);
+                    }
+                });
+
+                copyIcon.addEventListener('click', (e) => {
+                    e.stopImmediatePropagation();
+                    copyToClipboard(item.text);
+                    addToHistory(historyArray, item.text, container);
+                });
+
+                container.appendChild(div);
+            });
+        }
+
+        // ==================== 密码生成器 ====================
+        const charSets = {
+            upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            lower: 'abcdefghijklmnopqrstuvwxyz',
+            numbers: '0123456789',
+            special: '!@#$%^&*()_+-=[]{}|;:,.<>/?'
+        };
+
+        function generatePassword(length, includeUpper, includeLower, includeNumbers, includeSpecial) {
+            let chars = '';
+            let required = [];
+
+            if (includeUpper) {
+                chars += charSets.upper;
+                required.push(charSets.upper[Math.floor(Math.random() * charSets.upper.length)]);
+            }
+            if (includeLower) {
+                chars += charSets.lower;
+                required.push(charSets.lower[Math.floor(Math.random() * charSets.lower.length)]);
+            }
+            if (includeNumbers) {
+                chars += charSets.numbers;
+                required.push(charSets.numbers[Math.floor(Math.random() * charSets.numbers.length)]);
+            }
+            if (includeSpecial) {
+                chars += charSets.special;
+                required.push(charSets.special[Math.floor(Math.random() * charSets.special.length)]);
+            }
+
+            if (chars.length === 0) {
+                chars = 'abcdefghijklmnopqrstuvwxyz';
+            }
+
+            const array = new Uint8Array(length);
+            crypto.getRandomValues(array);
+
+            let password = '';
+
+            for (let i = 0; i < required.length; i++) {
+                password += required[i];
+            }
+
+            for (let i = required.length; i < length; i++) {
+                const randomIndex = array[i] % chars.length;
+                password += chars[randomIndex];
+            }
+
+            const passwordArray = password.split('');
+            for (let i = passwordArray.length - 1; i > 0; i--) {
+                const j = array[i] % (i + 1);
+                [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
+            }
+
+            return passwordArray.join('');
+        }
+
+        function updatePassword() {
+            const length = parseInt(document.getElementById('length-slider').value);
+            const upper = document.getElementById('upper').checked;
+            const lower = document.getElementById('lower').checked;
+            const numbers = document.getElementById('numbers').checked;
+            const special = document.getElementById('special').checked;
+
+            const checkedCount = [upper, lower, numbers, special].filter(Boolean).length;
+            if (checkedCount === 0) {
+                document.getElementById('lower').checked = true;
+            }
+
+            currentPassword = generatePassword(length, upper, lower, numbers, special);
+            document.getElementById('password-text').textContent = currentPassword;
+        }
+
+        // ==================== TOTP 实现 ====================
+        function base32Decode(input) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+            let output = [];
+            let buffer = 0;
+            let bitsLeft = 0;
+
+            input = input.toUpperCase().replace(/=+$/, '');
+
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+                const val = alphabet.indexOf(char);
+                if (val === -1) continue;
+
+                buffer = (buffer << 5) | val;
+                bitsLeft += 5;
+
+                if (bitsLeft >= 8) {
+                    output.push((buffer >> (bitsLeft - 8)) & 0xff);
+                    bitsLeft -= 8;
+                }
+            }
+
+            return new Uint8Array(output);
+        }
+
+        async function hmacSha1(key, data) {
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                key,
+                { name: 'HMAC', hash: 'SHA-1' },
+                false,
+                ['sign']
+            );
+
+            const signature = await crypto.subtle.sign('HMAC', cryptoKey, data);
+            return new Uint8Array(signature);
+        }
+
+        async function generateTOTP(secret) {
+            if (!secret) return '------';
+
+            try {
+                const key = base32Decode(secret);
+                const epoch = Math.floor(Date.now() / 1000);
+                const time = Math.floor(epoch / 30);
+
+                const timeBuffer = new ArrayBuffer(8);
+                const timeView = new DataView(timeBuffer);
+                timeView.setBigUint64(0, BigInt(time), false);
+
+                const hmac = await hmacSha1(key, timeBuffer);
+
+                const offset = hmac[hmac.length - 1] & 0xf;
+                const binary = ((hmac[offset] & 0x7f) << 24) |
+                              ((hmac[offset + 1] & 0xff) << 16) |
+                              ((hmac[offset + 2] & 0xff) << 8) |
+                              (hmac[offset + 3] & 0xff);
+
+                const otp = binary % 1000000;
+                return otp.toString().padStart(6, '0');
+            } catch (e) {
+                console.error(e);
+                return 'ERROR';
+            }
+        }
+
+        async function updateTOTP() {
+            const secretInput = document.getElementById('totp-secret').value.trim();
+            currentSecret = secretInput;
+
+            const code = await generateTOTP(secretInput);
+            document.getElementById('totp-code').textContent = code;
+        }
+
+        // ---- Fuse bar: replaces numeric countdown, becomes more prominent near 0 ----
+        function updateFuseBar() {
+            const step = 30;
+            const epoch = Math.floor(Date.now() / 1000);
+            const remaining = step - (epoch % step);
+            const fraction = remaining / step;
+
+            const track = document.getElementById('fuse-track');
+            const fill = document.getElementById('fuse-fill');
+
+            fill.style.width = (fraction * 100) + '%';
+
+            let state;
+            if (remaining > 12) state = 'safe';
+            else if (remaining > 5) state = 'warn';
+            else state = 'danger';
+
+            track.classList.remove('safe', 'warn', 'danger');
+            track.classList.add(state);
+
+            const intensity = Math.min(1, Math.max(0, (14 - remaining) / 14));
+            track.style.setProperty('--intensity', intensity.toFixed(2));
+        }
+
+        function startTOTPUpdater() {
+            if (totpInterval) clearInterval(totpInterval);
+            updateFuseBar();
+
+            totpInterval = setInterval(async () => {
+                await updateTOTP();
+                updateFuseBar();
+            }, 1000);
+        }
+
+        // ==================== 初始化 ====================
+        async function init() {
+            const slider = document.getElementById('length-slider');
+            const lengthValue = document.getElementById('length-value');
+
+            slider.addEventListener('input', () => {
+                lengthValue.textContent = slider.value;
+                updatePassword();
+            });
+
+            const checkboxes = ['upper', 'lower', 'numbers', 'special'];
+            checkboxes.forEach(id => {
+                document.getElementById(id).addEventListener('change', () => {
+                    updatePassword();
+                });
+            });
+
+            document.getElementById('generate-btn').addEventListener('click', updatePassword);
+
+            const passwordDisplay = document.getElementById('password-display');
+            passwordDisplay.addEventListener('click', () => {
+                if (currentPassword) {
+                    copyToClipboard(currentPassword);
+                    addToHistory(passwordHistory, currentPassword, document.getElementById('password-history'));
+                }
+            });
+
+            document.getElementById('copy-password-btn').addEventListener('click', (e) => {
+                e.stopImmediatePropagation();
+                if (currentPassword) {
+                    copyToClipboard(currentPassword);
+                    addToHistory(passwordHistory, currentPassword, document.getElementById('password-history'));
+                }
+            });
+
+            const secretInput = document.getElementById('totp-secret');
+            secretInput.addEventListener('input', async () => {
+                await updateTOTP();
+            });
+
+            const totpDisplay = document.getElementById('totp-display');
+            totpDisplay.addEventListener('click', async () => {
+                const code = document.getElementById('totp-code').textContent;
+                if (code && code.length === 6 && code !== '------') {
+                    copyToClipboard(code);
+                    addToHistory(totpHistory, code, document.getElementById('totp-history'));
+                }
+            });
+
+            document.getElementById('copy-totp-btn').addEventListener('click', async () => {
+                const code = document.getElementById('totp-code').textContent;
+                if (code && code.length === 6 && code !== '------') {
+                    copyToClipboard(code);
+                    addToHistory(totpHistory, code, document.getElementById('totp-history'));
+                }
+            });
+
+            updatePassword();
+
+            await updateTOTP();
+            startTOTPUpdater();
+
+            renderHistory(passwordHistory, document.getElementById('password-history'));
+            renderHistory(totpHistory, document.getElementById('totp-history'));
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
