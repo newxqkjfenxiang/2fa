@@ -3,163 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>纯前端 TOTP 2FA 验证码生成器</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/otplib@12.0.1/otplib-browser.js"></script>
+    <title>TOTP 验证码生成器</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background: #1a73e8;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .account {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .code {
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            text-align: center;
+            margin: 15px 0;
+            color: #1a73e8;
+        }
+        .countdown {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .progress {
+            height: 6px;
+            background: #1a73e8;
+            transition: width 0.2s linear;
+        }
+        button {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover { background: #1557b0; }
+        .add-btn {
+            display: block;
+            margin: 20px auto;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-
-    <div class="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-700">
-        <h1 class="text-2xl font-bold text-center mb-2 text-indigo-400">TOTP 2FA 生成器</h1>
-        <p class="text-xs text-gray-400 text-center mb-6">纯前端本地计算 · 绝不上传数据</p>
-
-        <div class="mb-6">
-            <label for="secretInput" class="block text-sm font-medium text-gray-300 mb-2">输入 Base32 密钥 (Secret)</label>
-            <input 
-                type="text" 
-                id="secretInput" 
-                placeholder="例如: JBSWY3DPEHPK3PXP" 
-                class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white placeholder-gray-500 font-mono tracking-wider uppercase text-center"
-            >
-            <p id="errorMessage" class="text-red-400 text-xs mt-2 hidden text-center">无效的 Base32 密钥，请检查输入</p>
+<body>
+    <div class="container">
+        <header>
+            <h1>TOTP 2FA 验证码生成器</h1>
+            <p>纯前端 · 本地计算 · 安全可靠</p>
+        </header>
+        
+        <div class="content" id="accounts">
+            <!-- 动态添加的账号卡片 -->
         </div>
 
-        <div class="bg-gray-950 rounded-xl p-6 border border-gray-800 text-center hidden" id="resultContainer">
-            <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">当前动态验证码</div>
-            
-            <div id="authCode" class="text-5xl font-mono font-bold text-indigo-400 tracking-widest my-4 cursor-pointer hover:text-indigo-300 transition-colors" title="点击复制">
-                ------
-            </div>
-
-            <div class="mt-4">
-                <div class="flex justify-between text-xs text-gray-400 mb-1 px-1">
-                    <span>每 30 秒更新</span>
-                    <span id="countdownText">剩余 -- 秒</span>
-                </div>
-                <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
-                    <div id="progressBar" class="bg-indigo-500 h-full w-full transition-all duration-1000 ease-linear"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="placeholderText" class="text-center text-gray-500 text-sm py-8 border border-dashed border-gray-700 rounded-xl">
-            请在上方输入密钥以生成验证码
-        </div>
+        <button class="add-btn" onclick="addAccount()">+ 添加新账号</button>
     </div>
 
-    <footer class="mt-8 text-xs text-gray-600 text-center">
-        安全提示：本工具完全在您的浏览器本地运行，不会向外发送任何网络请求。
-    </footer>
-
     <script>
-        // 配置 otplib 使用 crypto-js 作为加密驱动
-        const { totp } = window.otplib;
-        totp.options = { crypto: CryptoJS };
-
-        // 获取 DOM 元素
-        const secretInput = document.getElementById('secretInput');
-        const resultContainer = document.getElementById('resultContainer');
-        const placeholderText = document.getElementById('placeholderText');
-        const authCodeEl = document.getElementById('authCode');
-        const countdownTextEl = document.getElementById('countdownText');
-        const progressBarEl = document.getElementById('progressBar');
-        const errorMessageEl = document.getElementById('errorMessage');
-
-        let timer = null;
-
-        // 处理输入逻辑
-        secretInput.addEventListener('input', (e) => {
-            // 自动去除空格并转为大写
-            const secret = e.target.value.replace(/\s+/g, '').toUpperCase();
-            
-            if (!secret) {
-                resetUI();
-                return;
+        // Base32 解码
+        function base32Decode(input) {
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            input = input.toUpperCase().replace(/[^A-Z2-7]/g, '');
+            let bits = '';
+            for (let char of input) {
+                const val = alphabet.indexOf(char);
+                if (val === -1) throw new Error("无效的 Base32 字符");
+                bits += val.toString(2).padStart(5, '0');
             }
-
-            // 简单验证 Base32 格式 (A-Z, 2-7)
-            const base32Regex = /^[A-Z2-7]+=*$/;
-            if (!base32Regex.test(secret)) {
-                showError();
-                return;
-            }
-
-            // 输入合法，开始启动定时更新
-            errorMessageEl.classList.add('hidden');
-            placeholderText.classList.add('hidden');
-            resultContainer.classList.remove('hidden');
-
-            // 启动定时器
-            if (timer) clearInterval(timer);
-            updateTOTP(secret); // 立即执行一次
-            timer = setInterval(() => updateTOTP(secret), 1000);
-        });
-
-        // 核心更新逻辑
-        function updateTOTP(secret) {
-            try {
-                // 1. 计算当前 30 秒周期内的剩余时间
-                const epoch = Math.floor(Date.now() / 1000);
-                const timeStep = 30;
-                const remainingSeconds = timeStep - (epoch % timeStep);
-
-                // 2. 使用 otplib 生成 6 位验证码
-                const code = totp.generate(secret);
-                
-                // 3. 更新 UI
-                authCodeEl.textContent = code.slice(0, 3) + ' ' + code.slice(3); // 加空格方便阅读
-                countdownTextEl.textContent = `剩余 ${remainingSeconds} 秒`;
-                
-                // 4. 更新进度条百分比
-                const percent = (remainingSeconds / timeStep) * 100;
-                progressBarEl.style.width = `${percent}%`;
-
-                // 临近过期变红提示
-                if (remainingSeconds <= 5) {
-                    progressBarEl.className = "bg-red-500 h-full w-full transition-all duration-1000 ease-linear";
-                } else {
-                    progressBarEl.className = "bg-indigo-500 h-full w-full transition-all duration-1000 ease-linear";
+            const bytes = [];
+            for (let i = 0; i < bits.length; i += 8) {
+                if (bits.length - i >= 8) {
+                    bytes.push(parseInt(bits.substr(i, 8), 2));
                 }
+            }
+            return new Uint8Array(bytes);
+        }
 
-            } catch (err) {
-                // 如果库在解析 Base32 时报错，说明密钥真的有问题
-                showError();
+        // TOTP 生成核心函数（使用 Web Crypto API）
+        async function generateTOTP(secretBase32, digits = 6, period = 30) {
+            const keyBytes = base32Decode(secretBase32);
+            
+            const epoch = Math.floor(Date.now() / 1000);
+            const counter = Math.floor(epoch / period);
+            
+            // 时间计数器转为 8 字节大端
+            const counterBuffer = new ArrayBuffer(8);
+            const counterView = new DataView(counterBuffer);
+            counterView.setBigUint64(0, BigInt(counter));
+            
+            // HMAC-SHA1
+            const key = await crypto.subtle.importKey(
+                "raw", keyBytes, { name: "HMAC", hash: "SHA-1" },
+                false, ["sign"]
+            );
+            
+            const hmac = await crypto.subtle.sign("HMAC", key, counterBuffer);
+            const hmacBytes = new Uint8Array(hmac);
+            
+            // 动态截取
+            const offset = hmacBytes[hmacBytes.length - 1] & 0x0f;
+            const binaryCode = (
+                ((hmacBytes[offset] & 0x7f) << 24) |
+                ((hmacBytes[offset + 1] & 0xff) << 16) |
+                ((hmacBytes[offset + 2] & 0xff) << 8) |
+                (hmacBytes[offset + 3] & 0xff)
+            );
+            
+            const code = (binaryCode % Math.pow(10, digits)).toString().padStart(digits, '0');
+            return { code, remaining: period - (epoch % period) };
+        }
+
+        // 创建账号卡片
+        async function createAccountCard(secret = '', label = '我的账号') {
+            const id = 'acc-' + Date.now();
+            const card = document.createElement('div');
+            card.className = 'account';
+            card.id = id;
+            card.innerHTML = `
+                <input type="text" placeholder="账号名称" value="${label}" onchange="updateLabel('${id}', this.value)">
+                <input type="text" placeholder="Base32 Secret" value="${secret}" style="margin-top:8px;" onchange="updateSecret('${id}', this.value)">
+                <div class="code" id="${id}-code">------</div>
+                <div class="countdown" id="${id}-countdown">加载中...</div>
+                <div style="height:6px;background:#eee;border-radius:3px;overflow:hidden;margin-top:8px;">
+                    <div class="progress" id="${id}-progress" style="width:100%"></div>
+                </div>
+            `;
+            document.getElementById('accounts').appendChild(card);
+            
+            if (secret) {
+                startUpdating(id, secret);
             }
         }
 
-        function resetUI() {
-            if (timer) clearInterval(timer);
-            placeholderText.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            errorMessageEl.classList.add('hidden');
-        }
+        let timers = {};
 
-        function showError() {
-            if (timer) clearInterval(timer);
-            errorMessageEl.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            placeholderText.classList.add('hidden');
-        }
-
-        // 点击验证码自动复制功能
-        authCodeEl.addEventListener('click', () => {
-            const rawCode = authCodeEl.textContent.replace(' ', '');
-            if (rawCode && rawCode !== '------') {
-                navigator.clipboard.writeText(rawCode).then(() => {
-                    const originalText = authCodeEl.innerHTML;
-                    authCodeEl.textContent = "已复制！";
-                    authCodeEl.classList.remove('text-indigo-400');
-                    authCodeEl.classList.add('text-green-400');
+        async function startUpdating(id, secret) {
+            if (timers[id]) clearInterval(timers[id]);
+            
+            const update = async () => {
+                try {
+                    const { code, remaining } = await generateTOTP(secret);
+                    document.getElementById(`${id}-code`).textContent = code;
                     
-                    setTimeout(() => {
-                        authCodeEl.textContent = rawCode.slice(0, 3) + ' ' + rawCode.slice(3);
-                        authCodeEl.classList.remove('text-green-400');
-                        authCodeEl.classList.add('text-indigo-400');
-                    }, 1000);
-                });
-            }
-        });
+                    const percent = (remaining / 30) * 100;
+                    document.getElementById(`${id}-progress`).style.width = `${percent}%`;
+                    document.getElementById(`${id}-countdown`).textContent = `剩余 ${remaining} 秒`;
+                } catch (e) {
+                    document.getElementById(`${id}-code`).textContent = '错误';
+                    document.getElementById(`${id}-countdown`).textContent = e.message;
+                }
+            };
+            
+            await update();
+            timers[id] = setInterval(update, 1000);
+        }
+
+        function updateSecret(id, secret) {
+            startUpdating(id, secret);
+        }
+
+        function updateLabel(id, label) {
+            // 可扩展保存到 localStorage
+        }
+
+        function addAccount() {
+            createAccountCard('', '新账号');
+        }
+
+        // 初始化示例
+        window.onload = () => {
+            // 你可以在这里添加默认示例
+            // createAccountCard('JBSWY3DPEHPK3PXP', '测试账号');
+        };
     </script>
 </body>
 </html>
