@@ -1,212 +1,349 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOTP 验证码生成器</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        header {
-            background: #1a73e8;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .content {
-            padding: 20px;
-        }
-        .account {
-            background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-        .code {
-            font-size: 48px;
-            font-weight: bold;
-            letter-spacing: 8px;
-            text-align: center;
-            margin: 15px 0;
-            color: #1a73e8;
-        }
-        .countdown {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-        }
-        .progress {
-            height: 6px;
-            background: #1a73e8;
-            transition: width 0.2s linear;
-        }
-        button {
-            background: #1a73e8;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover { background: #1557b0; }
-        .add-btn {
-            display: block;
-            margin: 20px auto;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOTP 验证码生成器（纯前端 / 本地运算）</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --card:#171a21;
+    --border:#262a33;
+    --text:#e6e8ec;
+    --sub:#8b91a0;
+    --accent:#5b8cff;
+    --danger:#ff5b6e;
+    --ok:#4ade80;
+    --mono:'SF Mono','Consolas','Menlo',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding:24px 16px 80px;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+  h1{font-size:20px;font-weight:600;margin:0 0 4px;}
+  .subtitle{color:var(--sub);font-size:13px;margin-bottom:24px;line-height:1.6;}
+  .notice{
+    background:#1c2333;border:1px solid #2c3550;border-radius:10px;
+    padding:12px 14px;font-size:12.5px;color:#9fb3ff;margin-bottom:20px;line-height:1.7;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .add-form{display:flex;flex-direction:column;gap:10px;}
+  .row{display:flex;gap:10px;}
+  input[type=text]{
+    flex:1;
+    background:#0d0f14;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:11px 12px;
+    color:var(--text);
+    font-size:14px;
+    outline:none;
+    min-width:0;
+  }
+  input[type=text]:focus{border-color:var(--accent);}
+  button{
+    background:var(--accent);
+    border:none;
+    color:#fff;
+    font-size:14px;
+    font-weight:600;
+    padding:11px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  button:hover{filter:brightness(1.1);}
+  button.secondary{background:#2a2f3a;color:var(--sub);}
+  button.danger-btn{background:transparent;color:var(--danger);padding:6px 10px;font-size:12px;}
+  .err{color:var(--danger);font-size:12.5px;margin-top:2px;display:none;}
+
+  .account{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:16px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .account:last-child{border-bottom:none;}
+  .acc-left{min-width:0;flex:1;}
+  .acc-label{font-size:14px;font-weight:600;margin-bottom:6px;word-break:break-all;}
+  .acc-code{
+    font-family:var(--mono);
+    font-size:28px;
+    letter-spacing:4px;
+    font-weight:700;
+    color:var(--accent);
+    cursor:pointer;
+    user-select:all;
+  }
+  .acc-code.copied{color:var(--ok);}
+  .acc-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .ring{position:relative;width:38px;height:38px;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring circle{fill:none;stroke-width:3;}
+  .ring .bg{stroke:var(--border);}
+  .ring .fg{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .3s linear, stroke .3s;}
+  .ring .num{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-family:var(--mono);color:var(--sub);
+  }
+  .empty{color:var(--sub);font-size:13.5px;text-align:center;padding:30px 0;}
+  .hint{color:var(--sub);font-size:11.5px;margin-top:2px;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>TOTP 2FA 验证码生成器</h1>
-            <p>纯前端 · 本地计算 · 安全可靠</p>
-        </header>
-        
-        <div class="content" id="accounts">
-            <!-- 动态添加的账号卡片 -->
-        </div>
+<div class="wrap">
+  <h1>TOTP 验证码生成器</h1>
+  <p class="subtitle">与 Google Authenticator 同算法（RFC 6238，HMAC-SHA1，30 秒周期，6 位数字）。</p>
 
-        <button class="add-btn" onclick="addAccount()">+ 添加新账号</button>
+  <div class="notice">
+    🔒 完全离线运算：所有 Secret 与验证码仅保存在浏览器内存中，<b>不写入 localStorage / Cookie，不发送到任何服务器</b>。刷新页面后数据会自动清空。
+  </div>
+
+  <div class="card">
+    <div class="add-form">
+      <div class="row">
+        <input type="text" id="labelInput" placeholder="账号名称（例如 GitHub / 邮箱）">
+      </div>
+      <div class="row">
+        <input type="text" id="secretInput" placeholder="Base32 Secret（例如 JBSWY3DPEHPK3PXP）">
+        <button id="addBtn">添加</button>
+      </div>
+      <div class="err" id="errMsg"></div>
+      <div class="hint">支持带空格的 Secret（会自动去除），大小写不敏感。</div>
     </div>
+  </div>
 
-    <script>
-        // Base32 解码
-        function base32Decode(input) {
-            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-            input = input.toUpperCase().replace(/[^A-Z2-7]/g, '');
-            let bits = '';
-            for (let char of input) {
-                const val = alphabet.indexOf(char);
-                if (val === -1) throw new Error("无效的 Base32 字符");
-                bits += val.toString(2).padStart(5, '0');
-            }
-            const bytes = [];
-            for (let i = 0; i < bits.length; i += 8) {
-                if (bits.length - i >= 8) {
-                    bytes.push(parseInt(bits.substr(i, 8), 2));
-                }
-            }
-            return new Uint8Array(bytes);
-        }
+  <div class="card" id="listCard">
+    <div id="accountList">
+      <div class="empty">尚未添加任何账号</div>
+    </div>
+  </div>
+</div>
 
-        // TOTP 生成核心函数（使用 Web Crypto API）
-        async function generateTOTP(secretBase32, digits = 6, period = 30) {
-            const keyBytes = base32Decode(secretBase32);
-            
-            const epoch = Math.floor(Date.now() / 1000);
-            const counter = Math.floor(epoch / period);
-            
-            // 时间计数器转为 8 字节大端
-            const counterBuffer = new ArrayBuffer(8);
-            const counterView = new DataView(counterBuffer);
-            counterView.setBigUint64(0, BigInt(counter));
-            
-            // HMAC-SHA1
-            const key = await crypto.subtle.importKey(
-                "raw", keyBytes, { name: "HMAC", hash: "SHA-1" },
-                false, ["sign"]
-            );
-            
-            const hmac = await crypto.subtle.sign("HMAC", key, counterBuffer);
-            const hmacBytes = new Uint8Array(hmac);
-            
-            // 动态截取
-            const offset = hmacBytes[hmacBytes.length - 1] & 0x0f;
-            const binaryCode = (
-                ((hmacBytes[offset] & 0x7f) << 24) |
-                ((hmacBytes[offset + 1] & 0xff) << 16) |
-                ((hmacBytes[offset + 2] & 0xff) << 8) |
-                (hmacBytes[offset + 3] & 0xff)
-            );
-            
-            const code = (binaryCode % Math.pow(10, digits)).toString().padStart(digits, '0');
-            return { code, remaining: period - (epoch % period) };
-        }
+<script>
+(function(){
+  "use strict";
 
-        // 创建账号卡片
-        async function createAccountCard(secret = '', label = '我的账号') {
-            const id = 'acc-' + Date.now();
-            const card = document.createElement('div');
-            card.className = 'account';
-            card.id = id;
-            card.innerHTML = `
-                <input type="text" placeholder="账号名称" value="${label}" onchange="updateLabel('${id}', this.value)">
-                <input type="text" placeholder="Base32 Secret" value="${secret}" style="margin-top:8px;" onchange="updateSecret('${id}', this.value)">
-                <div class="code" id="${id}-code">------</div>
-                <div class="countdown" id="${id}-countdown">加载中...</div>
-                <div style="height:6px;background:#eee;border-radius:3px;overflow:hidden;margin-top:8px;">
-                    <div class="progress" id="${id}-progress" style="width:100%"></div>
-                </div>
-            `;
-            document.getElementById('accounts').appendChild(card);
-            
-            if (secret) {
-                startUpdating(id, secret);
-            }
-        }
+  // ---------- Base32 解码 ----------
+  const B32_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  function base32Decode(input) {
+    const clean = input.replace(/\s+/g, "").replace(/=+$/,"").toUpperCase();
+    if (clean.length === 0) throw new Error("Secret 为空");
+    for (const ch of clean) {
+      if (B32_ALPHABET.indexOf(ch) === -1) {
+        throw new Error("Secret 含有非法字符（仅支持 A-Z 和 2-7）");
+      }
+    }
+    let bits = "";
+    for (const ch of clean) {
+      const val = B32_ALPHABET.indexOf(ch);
+      bits += val.toString(2).padStart(5, "0");
+    }
+    const bytes = [];
+    for (let i = 0; i + 8 <= bits.length; i += 8) {
+      bytes.push(parseInt(bits.substring(i, i + 8), 2));
+    }
+    if (bytes.length === 0) throw new Error("Secret 长度不足");
+    return new Uint8Array(bytes);
+  }
 
-        let timers = {};
+  // ---------- TOTP 计算（Web Crypto，HMAC-SHA1） ----------
+  async function computeTOTP(secretBytes, timeStep, digits) {
+    const key = await crypto.subtle.importKey(
+      "raw",
+      secretBytes,
+      { name: "HMAC", hash: "SHA-1" },
+      false,
+      ["sign"]
+    );
 
-        async function startUpdating(id, secret) {
-            if (timers[id]) clearInterval(timers[id]);
-            
-            const update = async () => {
-                try {
-                    const { code, remaining } = await generateTOTP(secret);
-                    document.getElementById(`${id}-code`).textContent = code;
-                    
-                    const percent = (remaining / 30) * 100;
-                    document.getElementById(`${id}-progress`).style.width = `${percent}%`;
-                    document.getElementById(`${id}-countdown`).textContent = `剩余 ${remaining} 秒`;
-                } catch (e) {
-                    document.getElementById(`${id}-code`).textContent = '错误';
-                    document.getElementById(`${id}-countdown`).textContent = e.message;
-                }
-            };
-            
-            await update();
-            timers[id] = setInterval(update, 1000);
-        }
+    // 8字节大端计数器
+    const buf = new ArrayBuffer(8);
+    const view = new DataView(buf);
+    // JS 数字超过 32 位需要拆分高低位
+    const high = Math.floor(timeStep / 0x100000000);
+    const low = timeStep >>> 0;
+    view.setUint32(0, high, false);
+    view.setUint32(4, low, false);
 
-        function updateSecret(id, secret) {
-            startUpdating(id, secret);
-        }
+    const sig = await crypto.subtle.sign("HMAC", key, buf);
+    const hmac = new Uint8Array(sig);
 
-        function updateLabel(id, label) {
-            // 可扩展保存到 localStorage
-        }
+    const offset = hmac[hmac.length - 1] & 0x0f;
+    const binCode =
+      ((hmac[offset] & 0x7f) << 24) |
+      ((hmac[offset + 1] & 0xff) << 16) |
+      ((hmac[offset + 2] & 0xff) << 8) |
+      (hmac[offset + 3] & 0xff);
 
-        function addAccount() {
-            createAccountCard('', '新账号');
-        }
+    const otp = (binCode % Math.pow(10, digits)).toString().padStart(digits, "0");
+    return otp;
+  }
 
-        // 初始化示例
-        window.onload = () => {
-            // 你可以在这里添加默认示例
-            // createAccountCard('JBSWY3DPEHPK3PXP', '测试账号');
-        };
-    </script>
+  // ---------- 状态（仅内存，不持久化） ----------
+  let accounts = []; // {id, label, secretBytes, code}
+  let idCounter = 0;
+
+  const listEl = document.getElementById("accountList");
+  const labelInput = document.getElementById("labelInput");
+  const secretInput = document.getElementById("secretInput");
+  const addBtn = document.getElementById("addBtn");
+  const errMsg = document.getElementById("errMsg");
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errMsg.style.display = msg ? "block" : "none";
+  }
+
+  addBtn.addEventListener("click", async () => {
+    showError("");
+    const label = labelInput.value.trim() || "未命名账号";
+    const secretRaw = secretInput.value.trim();
+    if (!secretRaw) { showError("请输入 Secret"); return; }
+
+    let secretBytes;
+    try {
+      secretBytes = base32Decode(secretRaw);
+    } catch (e) {
+      showError(e.message);
+      return;
+    }
+
+    // 试算一次，确认可用
+    try {
+      await computeTOTP(secretBytes, Math.floor(Date.now()/1000/30), 6);
+    } catch (e) {
+      showError("计算失败：" + e.message);
+      return;
+    }
+
+    accounts.push({ id: ++idCounter, label, secretBytes, code: "------" });
+    labelInput.value = "";
+    secretInput.value = "";
+    renderList();
+    updateCodes();
+  });
+
+  secretInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") addBtn.click();
+  });
+
+  function removeAccount(id) {
+    accounts = accounts.filter(a => a.id !== id);
+    renderList();
+  }
+
+  function renderList() {
+    if (accounts.length === 0) {
+      listEl.innerHTML = '<div class="empty">尚未添加任何账号</div>';
+      return;
+    }
+    listEl.innerHTML = accounts.map(a => `
+      <div class="account" data-id="${a.id}">
+        <div class="acc-left">
+          <div class="acc-label">${escapeHtml(a.label)}</div>
+          <div class="acc-code" data-code-for="${a.id}" title="点击复制">${a.code}</div>
+        </div>
+        <div class="acc-right">
+          <div class="ring">
+            <svg width="38" height="38" viewBox="0 0 38 38">
+              <circle class="bg" cx="19" cy="19" r="16"></circle>
+              <circle class="fg" data-ring-for="${a.id}" cx="19" cy="19" r="16"
+                stroke-dasharray="100.5" stroke-dashoffset="0"></circle>
+            </svg>
+            <div class="num" data-num-for="${a.id}">30</div>
+          </div>
+          <button class="danger-btn" data-remove="${a.id}">删除</button>
+        </div>
+      </div>
+    `).join("");
+
+    listEl.querySelectorAll("[data-remove]").forEach(btn => {
+      btn.addEventListener("click", () => removeAccount(Number(btn.dataset.remove)));
+    });
+    listEl.querySelectorAll("[data-code-for]").forEach(el => {
+      el.addEventListener("click", () => {
+        const text = el.textContent.trim();
+        navigator.clipboard?.writeText(text).then(() => {
+          el.classList.add("copied");
+          setTimeout(() => el.classList.remove("copied"), 600);
+        }).catch(()=>{});
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[c]));
+  }
+
+  const CIRC = 2 * Math.PI * 16; // r=16
+
+  async function updateCodes() {
+    if (accounts.length === 0) return;
+    const now = Math.floor(Date.now() / 1000);
+    const step = Math.floor(now / 30);
+    await Promise.all(accounts.map(async a => {
+      try {
+        a.code = await computeTOTP(a.secretBytes, step, 6);
+      } catch (e) {
+        a.code = "ERROR";
+      }
+      const codeEl = listEl.querySelector(`[data-code-for="${a.id}"]`);
+      if (codeEl) codeEl.textContent = formatCode(a.code);
+    }));
+  }
+
+  function formatCode(code) {
+    if (code.length === 6) return code.slice(0,3) + " " + code.slice(3);
+    return code;
+  }
+
+  function updateRings() {
+    const now = Date.now() / 1000;
+    const remaining = 30 - (Math.floor(now) % 30);
+    const frac = (now % 30) / 30;
+    const offset = CIRC * frac;
+    accounts.forEach(a => {
+      const ring = listEl.querySelector(`[data-ring-for="${a.id}"]`);
+      const num = listEl.querySelector(`[data-num-for="${a.id}"]`);
+      if (ring) {
+        ring.setAttribute("stroke-dasharray", CIRC.toFixed(2));
+        ring.setAttribute("stroke-dashoffset", offset.toFixed(2));
+        ring.style.stroke = remaining <= 5 ? "var(--danger)" : "var(--accent)";
+      }
+      if (num) num.textContent = remaining;
+    });
+  }
+
+  let lastStep = -1;
+  function tick() {
+    const step = Math.floor(Date.now() / 1000 / 30);
+    if (step !== lastStep) {
+      lastStep = step;
+      updateCodes();
+    }
+    updateRings();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+})();
+</script>
 </body>
 </html>
