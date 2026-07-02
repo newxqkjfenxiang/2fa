@@ -5,328 +5,444 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Offline Security Toolkit</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
         :root {
-            --primary: #3b82f6;
+            --paper: #eef1ec;
+            --panel: #ffffff;
+            --ink: #16211c;
+            --ink-soft: #5c6b61;
+            --line: #d9e0d8;
+            --vault: #1f6f5c;
+            --vault-soft: #e2efe9;
+            --brass: #b9893e;
+            --warn: #b9893e;
+            --alarm: #c8412b;
+            --glow-safe: rgba(31, 111, 92, 0.30);
+            --glow-warn: rgba(185, 137, 62, 0.40);
+            --glow-danger: rgba(200, 65, 43, 0.55);
+            --mono: ui-monospace, 'SF Mono', 'Space Grotesk', Menlo, Consolas, monospace;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-            color: #1e2937;
+            background:
+                radial-gradient(1200px 400px at 50% -10%, rgba(31,111,92,0.06), transparent),
+                repeating-linear-gradient(90deg, transparent, transparent 41px, rgba(22,33,28,0.025) 42px),
+                var(--paper);
+            color: var(--ink);
             min-height: 100vh;
-            padding: 20px;
+            padding: 28px 18px 48px;
         }
-        
+
         .container {
-            max-width: 1200px;
+            max-width: 1120px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            background: var(--panel);
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            box-shadow: 0 30px 60px -30px rgba(22,33,28,0.25);
             overflow: hidden;
+            animation: rise 0.5s cubic-bezier(0.16,1,0.3,1);
         }
-        
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         header {
-            background: linear-gradient(to right, #1e40af, #3b82f6);
-            color: white;
-            padding: 2rem;
-            text-align: center;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 60%),
+                linear-gradient(135deg, #16332b, #1f6f5c 60%, #245e4f);
+            color: #f3f6f2;
+            padding: 2.1rem 2rem 1.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
         }
-        
+        header::after {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brass), transparent 70%);
+            opacity: 0.85;
+        }
+
+        .header-title { display: flex; align-items: center; gap: 14px; }
+        .header-mark {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
         h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.2rem;
+            font-size: 1.55rem;
             font-weight: 600;
-            margin-bottom: 0.5rem;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
         }
-        
         .subtitle {
-            opacity: 0.9;
-            font-size: 1.1rem;
+            font-family: var(--mono);
+            font-size: 0.8rem;
+            color: rgba(243,246,242,0.75);
+            margin-top: 4px;
+            letter-spacing: 0.3px;
         }
-        
+        .badge {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 0.4px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.28);
+            color: #f3f6f2;
+            padding: 7px 13px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
         .main {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            background: #e2e8f0;
+            gap: 1px;
+            background: var(--line);
         }
-        
+
         .section {
-            background: white;
-            padding: 2rem;
+            background: var(--panel);
+            padding: 2rem 2rem 1.8rem;
             display: flex;
             flex-direction: column;
         }
-        
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            letter-spacing: 1.2px;
+            color: var(--brass);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
         .section-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #f1f5f9;
+            margin-bottom: 1.4rem;
+            padding-bottom: 1.1rem;
+            border-bottom: 1px solid var(--line);
         }
-        
+
+        .section-icon {
+            width: 38px; height: 38px;
+            border-radius: 9px;
+            background: var(--vault-soft);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
         .section-title {
-            font-size: 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
             font-weight: 600;
         }
-        
+
         .password-display {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 1.25rem 1.5rem;
-            font-family: 'Space Grotesk', monospace;
-            font-size: 1.35rem;
-            letter-spacing: 2px;
+            background: var(--vault-soft);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 1.1rem 4.6rem 1.1rem 1.3rem;
+            font-family: var(--mono);
+            font-size: 1.25rem;
+            letter-spacing: 1px;
             word-break: break-all;
-            min-height: 68px;
+            min-height: 60px;
             display: flex;
             align-items: center;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: border-color 0.18s ease, background 0.18s ease;
             position: relative;
         }
-        
-        .password-display:hover {
-            border-color: var(--primary);
-            background: #f0f9ff;
-        }
-        
+        .password-display:hover { border-color: var(--vault); background: #dcede5; }
+
         .copy-btn {
             position: absolute;
-            right: 16px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            background: white;
-            border: 1px solid #cbd5e1;
-            color: #64748b;
-            padding: 8px 16px;
-            border-radius: 9999px;
-            font-size: 0.9rem;
+            background: var(--panel);
+            border: 1px solid var(--line);
+            color: var(--ink-soft);
+            padding: 7px 13px;
+            border-radius: 999px;
+            font-size: 0.82rem;
             font-weight: 500;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
+            gap: 5px;
+            transition: all 0.18s ease;
         }
-        
-        .copy-btn:hover {
-            background: #f1f5f9;
-            color: #1e40af;
-        }
-        
-        .controls {
-            margin: 1.5rem 0;
-        }
-        
-        .slider-container {
-            margin-bottom: 1.5rem;
-        }
-        
+        .copy-btn:hover { background: var(--vault); border-color: var(--vault); color: #fff; }
+
+        .controls { margin: 1.4rem 0; }
+        .slider-container { margin-bottom: 1.4rem; }
         .slider-label {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
             font-weight: 500;
+            font-size: 0.92rem;
         }
-        
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--primary);
-        }
-        
+        input[type="range"] { width: 100%; accent-color: var(--vault); }
         .length-value {
-            font-size: 1.5rem;
+            font-family: var(--mono);
+            font-size: 1.15rem;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--vault);
         }
-        
+
         .checkbox-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 1.5rem;
+            gap: 10px;
+            margin-bottom: 1.4rem;
         }
-        
         .checkbox-item {
             display: flex;
             align-items: center;
             gap: 8px;
             font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            padding: 9px 11px;
+            transition: border-color 0.15s ease, background 0.15s ease;
         }
-        
-        .totp-display {
-            background: linear-gradient(90deg, #1e3a8a, #3b82f6);
-            color: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            font-size: 2.2rem;
-            font-family: monospace;
-            letter-spacing: 8px;
-            text-align: center;
-            margin-bottom: 1rem;
-            position: relative;
+        .checkbox-item:has(input:checked) { border-color: var(--vault); background: var(--vault-soft); }
+        .checkbox-item input { accent-color: var(--vault); width: 15px; height: 15px; }
+
+        #generate-btn {
+            flex: 1;
+            padding: 13px;
+            background: var(--vault);
+            color: #fff;
+            border: none;
+            border-radius: 11px;
+            font-weight: 600;
+            font-size: 1rem;
             cursor: pointer;
+            transition: background 0.18s ease, transform 0.08s ease;
+            font-family: 'Space Grotesk', sans-serif;
         }
-        
-        .countdown {
-            text-align: center;
-            font-size: 0.95rem;
-            color: #64748b;
-            margin-top: 8px;
-        }
-        
+        #generate-btn:hover { background: #185a4a; }
+        #generate-btn:active { transform: scale(0.985); }
+
         .secret-input {
             width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-family: monospace;
-            margin-bottom: 1rem;
+            padding: 13px 15px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            font-size: 0.95rem;
+            font-family: var(--mono);
+            margin-bottom: 1.1rem;
+            background: var(--panel);
+            color: var(--ink);
+            transition: border-color 0.15s ease;
         }
-        
-        .secret-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .history {
-            margin-top: auto;
-            padding-top: 1.5rem;
-            border-top: 2px solid #f1f5f9;
-        }
-        
-        .history-title {
-            font-size: 1rem;
+        .secret-input:focus { outline: none; border-color: var(--vault); }
+
+        .totp-display {
+            background: linear-gradient(135deg, #16332b, #1f6f5c);
+            color: #fff;
+            border-radius: 14px;
+            padding: 1.4rem;
+            font-size: 2.05rem;
+            font-family: var(--mono);
             font-weight: 600;
-            margin-bottom: 12px;
-            color: #64748b;
+            letter-spacing: 7px;
+            text-align: center;
+            margin-bottom: 0.9rem;
+            cursor: pointer;
+            transition: box-shadow 0.4s ease;
         }
-        
+
+        .fuse-wrap { margin-bottom: 1.5rem; }
+        .fuse-track {
+            --intensity: 0;
+            position: relative;
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--vault-soft);
+            overflow: hidden;
+            box-shadow: 0 0 calc(var(--intensity) * 16px) calc(var(--intensity) * 2px) var(--glow-color, transparent);
+            transition: box-shadow 0.5s ease;
+        }
+        .fuse-fill {
+            height: 100%;
+            width: 100%;
+            border-radius: 999px;
+            background: var(--vault);
+            transition: width 1s linear, background-color 0.5s ease;
+        }
+        .fuse-track.safe   { --glow-color: var(--glow-safe); }
+        .fuse-track.warn   { --glow-color: var(--glow-warn); }
+        .fuse-track.warn .fuse-fill   { background: var(--warn); }
+        .fuse-track.danger { --glow-color: var(--glow-danger); }
+        .fuse-track.danger .fuse-fill { background: var(--alarm); }
+        .fuse-track.danger { animation: pulse-track 0.9s ease-in-out infinite; }
+
+        @keyframes pulse-track {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.6); }
+        }
+
+        .fuse-caption {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            color: var(--ink-soft);
+            letter-spacing: 0.3px;
+        }
+
+        #copy-totp-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--vault);
+            color: #fff;
+            border: none;
+            border-radius: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: background 0.18s ease, transform 0.08s ease;
+        }
+        #copy-totp-btn:hover { background: #185a4a; }
+        #copy-totp-btn:active { transform: scale(0.985); }
+
+        .history { margin-top: auto; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+        .history-title {
+            font-family: var(--mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--ink-soft);
+        }
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            max-height: 260px;
+            gap: 7px;
+            max-height: 240px;
             overflow-y: auto;
         }
-        
         .history-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8fafc;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 1rem;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-family: var(--mono);
+            font-size: 0.92rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s ease;
         }
-        
-        .history-item:hover {
-            background: #f0f9ff;
-        }
-        
-        .history-time {
-            font-size: 0.8rem;
-            color: #94a3b8;
-        }
-        
+        .history-item:hover { background: var(--vault-soft); border-color: var(--vault); }
+        .history-time { font-size: 0.75rem; color: var(--ink-soft); }
+
         .toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e2937;
-            color: white;
-            padding: 12px 28px;
-            border-radius: 9999px;
-            font-size: 1rem;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            background: var(--ink);
+            color: #fff;
+            padding: 11px 26px;
+            border-radius: 999px;
+            font-size: 0.92rem;
+            font-family: var(--mono);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
             opacity: 0;
-            transition: all 0.3s;
+            transition: opacity 0.25s ease, transform 0.25s ease;
             z-index: 1000;
         }
-        
+        .toast.show { opacity: 1; }
+
         footer {
             text-align: center;
-            padding: 2rem;
-            background: #f8fafc;
-            color: #64748b;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            padding: 1.8rem 2rem;
+            background: var(--paper);
+            border-top: 1px solid var(--line);
+            color: var(--ink-soft);
+            font-size: 0.88rem;
+            line-height: 1.6;
         }
-        
-        .refresh-btn {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-        
-        .refresh-btn:hover {
-            transform: rotate(180deg);
-        }
-        
+        footer p:first-child strong { color: var(--ink); }
+        footer p:last-child { margin-top: 10px; font-size: 0.78rem; font-family: var(--mono); color: var(--ink-soft); }
+
         @media (max-width: 768px) {
-            .main {
-                grid-template-columns: 1fr;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
+            .main { grid-template-columns: 1fr; }
+            h1 { font-size: 1.3rem; }
+            .password-display { padding-right: 1.3rem; flex-direction: column; align-items: flex-start; gap: 8px; }
+            .copy-btn { position: static; transform: none; margin-top: 10px; align-self: flex-start; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🔐 Offline Security Toolkit</h1>
-            <p class="subtitle">纯前端 • 完全离线 • 本地安全工具</p>
+            <div class="header-title">
+                <div class="header-mark">🔐</div>
+                <div>
+                    <h1>Offline Security Toolkit</h1>
+                    <div class="subtitle">纯前端 · 完全离线 · 本地安全工具</div>
+                </div>
+            </div>
+            <span class="badge">100% local · no network</span>
         </header>
-        
+
         <div class="main">
             <!-- 强密码生成器 -->
             <div class="section">
+                <div class="eyebrow">Module 01</div>
                 <div class="section-header">
-                    <span style="font-size: 1.8rem;">🔐</span>
+                    <div class="section-icon">🔐</div>
                     <h2 class="section-title">强密码生成器</h2>
                 </div>
-                
+
                 <div class="password-display" id="password-display">
                     <span id="password-text">Loading...</span>
                     <button class="copy-btn" id="copy-password-btn">
                         📋 Copy
                     </button>
                 </div>
-                
+
                 <div class="controls">
                     <div class="slider-container">
                         <div class="slider-label">
                             <span>密码长度</span>
                             <span class="length-value" id="length-value">20</span>
                         </div>
-                        <input type="range" id="length-slider" 
+                        <input type="range" id="length-slider"
                                min="4" max="64" value="20" step="1">
                     </div>
-                    
+
                     <div class="checkbox-group">
                         <label class="checkbox-item">
                             <input type="checkbox" id="upper" checked>
@@ -346,46 +462,53 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div style="display: flex; gap: 12px; margin-bottom: 2rem;">
-                    <button id="generate-btn" 
-                            style="flex: 1; padding: 14px; background: #1e40af; color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1.1rem; cursor: pointer;">
+                    <button id="generate-btn">
                         🔄 重新生成
                     </button>
                 </div>
-                
+
                 <!-- 历史记录 -->
                 <div class="history">
                     <div class="history-title">最近复制的密码</div>
                     <div class="history-list" id="password-history"></div>
                 </div>
             </div>
-            
+
             <!-- TOTP 验证器 -->
             <div class="section">
+                <div class="eyebrow">Module 02</div>
                 <div class="section-header">
-                    <span style="font-size: 1.8rem;">🔑</span>
+                    <div class="section-icon">🔑</div>
                     <h2 class="section-title">TOTP 验证码</h2>
                 </div>
-                
-                <input type="text" id="totp-secret" 
+
+                <input type="text" id="totp-secret"
                        class="secret-input"
                        placeholder="输入 Base32 Secret (例如: JBSWY3DPEHPK3PXP)"
                        spellcheck="false">
-                
+
                 <div class="totp-display" id="totp-display">
                     <span id="totp-code">------</span>
                 </div>
-                
-                <div class="countdown" id="countdown">Refresh in <span id="seconds">30</span>s</div>
-                
-                <div style="display: flex; gap: 12px; margin: 1.5rem 0;">
-                    <button id="copy-totp-btn"
-                            style="flex: 1; padding: 12px; background: #1e40af; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer;">
+
+                <div class="fuse-wrap">
+                    <div class="fuse-track safe" id="fuse-track">
+                        <div class="fuse-fill" id="fuse-fill"></div>
+                    </div>
+                    <div class="fuse-caption">
+                        <span>刷新周期</span>
+                        <span>30s</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 1.5rem;">
+                    <button id="copy-totp-btn">
                         📋 复制验证码
                     </button>
                 </div>
-                
+
                 <!-- 历史记录 -->
                 <div class="history">
                     <div class="history-title">最近复制的验证码</div>
@@ -393,13 +516,13 @@
                 </div>
             </div>
         </div>
-        
+
         <footer>
-            <p>此工具完全离线运行。所有密码、TOTP 密钥、验证码及复制历史记录均仅在浏览器内存中处理，不会存储、上传或传输任何数据。刷新或关闭页面后，所有数据都会被永久清除。</p>
-            <p style="margin-top: 12px; font-size: 0.85rem;">使用 Web Crypto API 实现安全随机数与 HMAC-SHA1 • 符合 RFC 6238</p>
+            <p><strong>此工具完全离线运行。</strong>所有密码、TOTP 密钥、验证码及复制历史记录均仅在浏览器内存中处理，不会存储、上传或传输任何数据。刷新或关闭页面后，所有数据都会被永久清除。</p>
+            <p>使用 Web Crypto API 实现安全随机数与 HMAC-SHA1 · 符合 RFC 6238</p>
         </footer>
     </div>
-    
+
     <div class="toast" id="toast">Copied!</div>
 
     <script>
@@ -409,58 +532,56 @@
         let currentPassword = '';
         let totpInterval = null;
         let currentSecret = '';
-        
+
         // ==================== 工具函数 ====================
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
-            toast.style.opacity = '1';
+            toast.classList.add('show');
             setTimeout(() => {
-                toast.style.opacity = '0';
-            }, 1800);
+                toast.classList.remove('show');
+            }, 1000);
         }
-        
+
         function copyToClipboard(text) {
             if (!text) return;
             navigator.clipboard.writeText(text).then(() => {
-                showToast('已复制！');
+                showToast('Copied!');
             }).catch(() => {
-                // 降级方案
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                showToast('已复制！');
+                showToast('Copied!');
             });
         }
-        
+
         function formatTime() {
             const now = new Date();
             return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
         }
-        
+
         function addToHistory(historyArray, text, listElement, max = 5) {
             const time = formatTime();
-            // 如果已存在，更新时间并移到最前
             const existingIndex = historyArray.findIndex(item => item.text === text);
             if (existingIndex !== -1) {
                 historyArray.splice(existingIndex, 1);
             }
-            
+
             historyArray.unshift({ text, time });
-            
+
             if (historyArray.length > max) {
                 historyArray.pop();
             }
-            
+
             renderHistory(historyArray, listElement);
         }
-        
+
         function renderHistory(historyArray, container) {
             container.innerHTML = '';
-            
+
             if (historyArray.length === 0) {
                 const empty = document.createElement('div');
                 empty.style.textAlign = 'center';
@@ -471,19 +592,19 @@
                 container.appendChild(empty);
                 return;
             }
-            
+
             historyArray.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'history-item';
-                
+
                 const content = document.createElement('div');
                 content.style.flex = '1';
                 content.textContent = item.text;
-                
+
                 const time = document.createElement('div');
                 time.className = 'history-time';
                 time.textContent = item.time;
-                
+
                 const copyIcon = document.createElement('button');
                 copyIcon.style.background = 'none';
                 copyIcon.style.border = 'none';
@@ -491,30 +612,28 @@
                 copyIcon.style.cursor = 'pointer';
                 copyIcon.style.fontSize = '1.1rem';
                 copyIcon.textContent = '📋';
-                
+
                 div.appendChild(content);
                 div.appendChild(time);
                 div.appendChild(copyIcon);
-                
-                // 点击整行复制
+
                 div.addEventListener('click', (e) => {
                     if (e.target !== copyIcon) {
                         copyToClipboard(item.text);
-                        // 更新时间并移到顶部
                         addToHistory(historyArray, item.text, container);
                     }
                 });
-                
+
                 copyIcon.addEventListener('click', (e) => {
                     e.stopImmediatePropagation();
                     copyToClipboard(item.text);
                     addToHistory(historyArray, item.text, container);
                 });
-                
+
                 container.appendChild(div);
             });
         }
-        
+
         // ==================== 密码生成器 ====================
         const charSets = {
             upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
@@ -522,11 +641,11 @@
             numbers: '0123456789',
             special: '!@#$%^&*()_+-=[]{}|;:,.<>/?'
         };
-        
+
         function generatePassword(length, includeUpper, includeLower, includeNumbers, includeSpecial) {
             let chars = '';
             let required = [];
-            
+
             if (includeUpper) {
                 chars += charSets.upper;
                 required.push(charSets.upper[Math.floor(Math.random() * charSets.upper.length)]);
@@ -543,83 +662,76 @@
                 chars += charSets.special;
                 required.push(charSets.special[Math.floor(Math.random() * charSets.special.length)]);
             }
-            
+
             if (chars.length === 0) {
                 chars = 'abcdefghijklmnopqrstuvwxyz';
             }
-            
-            // 使用 crypto.getRandomValues 生成安全随机数
+
             const array = new Uint8Array(length);
             crypto.getRandomValues(array);
-            
+
             let password = '';
-            
-            // 先加入必需字符
+
             for (let i = 0; i < required.length; i++) {
                 password += required[i];
             }
-            
-            // 填充剩余字符
+
             for (let i = required.length; i < length; i++) {
                 const randomIndex = array[i] % chars.length;
                 password += chars[randomIndex];
             }
-            
-            // Fisher-Yates 洗牌
+
             const passwordArray = password.split('');
             for (let i = passwordArray.length - 1; i > 0; i--) {
                 const j = array[i] % (i + 1);
                 [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
             }
-            
+
             return passwordArray.join('');
         }
-        
+
         function updatePassword() {
             const length = parseInt(document.getElementById('length-slider').value);
             const upper = document.getElementById('upper').checked;
             const lower = document.getElementById('lower').checked;
             const numbers = document.getElementById('numbers').checked;
             const special = document.getElementById('special').checked;
-            
-            // 至少保留一个选项
+
             const checkedCount = [upper, lower, numbers, special].filter(Boolean).length;
             if (checkedCount === 0) {
                 document.getElementById('lower').checked = true;
             }
-            
+
             currentPassword = generatePassword(length, upper, lower, numbers, special);
             document.getElementById('password-text').textContent = currentPassword;
         }
-        
+
         // ==================== TOTP 实现 ====================
-        // Base32 解码
         function base32Decode(input) {
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
             let output = [];
             let buffer = 0;
             let bitsLeft = 0;
-            
+
             input = input.toUpperCase().replace(/=+$/, '');
-            
+
             for (let i = 0; i < input.length; i++) {
                 const char = input[i];
                 const val = alphabet.indexOf(char);
                 if (val === -1) continue;
-                
+
                 buffer = (buffer << 5) | val;
                 bitsLeft += 5;
-                
+
                 if (bitsLeft >= 8) {
                     output.push((buffer >> (bitsLeft - 8)) & 0xff);
                     bitsLeft -= 8;
                 }
             }
-            
+
             return new Uint8Array(output);
         }
-        
-        // HMAC-SHA1 使用 Web Crypto API
+
         async function hmacSha1(key, data) {
             const cryptoKey = await crypto.subtle.importKey(
                 'raw',
@@ -628,34 +740,31 @@
                 false,
                 ['sign']
             );
-            
+
             const signature = await crypto.subtle.sign('HMAC', cryptoKey, data);
             return new Uint8Array(signature);
         }
-        
-        // TOTP 计算
+
         async function generateTOTP(secret) {
             if (!secret) return '------';
-            
+
             try {
                 const key = base32Decode(secret);
                 const epoch = Math.floor(Date.now() / 1000);
                 const time = Math.floor(epoch / 30);
-                
-                // 8字节大端序时间
+
                 const timeBuffer = new ArrayBuffer(8);
                 const timeView = new DataView(timeBuffer);
                 timeView.setBigUint64(0, BigInt(time), false);
-                
+
                 const hmac = await hmacSha1(key, timeBuffer);
-                
-                // 动态截断
+
                 const offset = hmac[hmac.length - 1] & 0xf;
                 const binary = ((hmac[offset] & 0x7f) << 24) |
                               ((hmac[offset + 1] & 0xff) << 16) |
                               ((hmac[offset + 2] & 0xff) << 8) |
                               (hmac[offset + 3] & 0xff);
-                
+
                 const otp = binary % 1000000;
                 return otp.toString().padStart(6, '0');
             } catch (e) {
@@ -663,52 +772,68 @@
                 return 'ERROR';
             }
         }
-        
-        // 更新 TOTP
+
         async function updateTOTP() {
             const secretInput = document.getElementById('totp-secret').value.trim();
             currentSecret = secretInput;
-            
+
             const code = await generateTOTP(secretInput);
             document.getElementById('totp-code').textContent = code;
         }
-        
+
+        // ---- Fuse bar: replaces numeric countdown, becomes more prominent near 0 ----
+        function updateFuseBar() {
+            const step = 30;
+            const epoch = Math.floor(Date.now() / 1000);
+            const remaining = step - (epoch % step);
+            const fraction = remaining / step;
+
+            const track = document.getElementById('fuse-track');
+            const fill = document.getElementById('fuse-fill');
+
+            fill.style.width = (fraction * 100) + '%';
+
+            let state;
+            if (remaining > 12) state = 'safe';
+            else if (remaining > 5) state = 'warn';
+            else state = 'danger';
+
+            track.classList.remove('safe', 'warn', 'danger');
+            track.classList.add(state);
+
+            const intensity = Math.min(1, Math.max(0, (14 - remaining) / 14));
+            track.style.setProperty('--intensity', intensity.toFixed(2));
+        }
+
         function startTOTPUpdater() {
             if (totpInterval) clearInterval(totpInterval);
-            
+            updateFuseBar();
+
             totpInterval = setInterval(async () => {
                 await updateTOTP();
-                
-                // 更新倒计时
-                const epoch = Math.floor(Date.now() / 1000);
-                const secondsLeft = 30 - (epoch % 30);
-                document.getElementById('seconds').textContent = secondsLeft;
+                updateFuseBar();
             }, 1000);
         }
-        
+
         // ==================== 初始化 ====================
         async function init() {
-            // 密码生成器事件
             const slider = document.getElementById('length-slider');
             const lengthValue = document.getElementById('length-value');
-            
+
             slider.addEventListener('input', () => {
                 lengthValue.textContent = slider.value;
                 updatePassword();
             });
-            
-            // 复选框事件
+
             const checkboxes = ['upper', 'lower', 'numbers', 'special'];
             checkboxes.forEach(id => {
                 document.getElementById(id).addEventListener('change', () => {
                     updatePassword();
                 });
             });
-            
-            // 重新生成按钮
+
             document.getElementById('generate-btn').addEventListener('click', updatePassword);
-            
-            // 密码点击复制
+
             const passwordDisplay = document.getElementById('password-display');
             passwordDisplay.addEventListener('click', () => {
                 if (currentPassword) {
@@ -716,8 +841,7 @@
                     addToHistory(passwordHistory, currentPassword, document.getElementById('password-history'));
                 }
             });
-            
-            // Copy 按钮
+
             document.getElementById('copy-password-btn').addEventListener('click', (e) => {
                 e.stopImmediatePropagation();
                 if (currentPassword) {
@@ -725,14 +849,12 @@
                     addToHistory(passwordHistory, currentPassword, document.getElementById('password-history'));
                 }
             });
-            
-            // TOTP 事件
+
             const secretInput = document.getElementById('totp-secret');
             secretInput.addEventListener('input', async () => {
                 await updateTOTP();
             });
-            
-            // TOTP 点击复制
+
             const totpDisplay = document.getElementById('totp-display');
             totpDisplay.addEventListener('click', async () => {
                 const code = document.getElementById('totp-code').textContent;
@@ -741,7 +863,7 @@
                     addToHistory(totpHistory, code, document.getElementById('totp-history'));
                 }
             });
-            
+
             document.getElementById('copy-totp-btn').addEventListener('click', async () => {
                 const code = document.getElementById('totp-code').textContent;
                 if (code && code.length === 6 && code !== '------') {
@@ -749,20 +871,16 @@
                     addToHistory(totpHistory, code, document.getElementById('totp-history'));
                 }
             });
-            
-            // 初始化密码
+
             updatePassword();
-            
-            // 初始化 TOTP
+
             await updateTOTP();
             startTOTPUpdater();
-            
-            // 初始历史记录占位
+
             renderHistory(passwordHistory, document.getElementById('password-history'));
             renderHistory(totpHistory, document.getElementById('totp-history'));
         }
-        
-        // 启动
+
         window.onload = init;
     </script>
 </body>
