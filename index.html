@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Offline Security Toolkit - 离线安全工具箱</title>
     <style>
-        /* === 纯 CSS 样式：响应式与现代浅色主题 === */
         :root {
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
@@ -18,64 +17,30 @@
             --success-color: #10b981;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.5;
             padding: 2rem 1rem;
-            display: flex;
-            flex-col: column;
             min-height: 100vh;
         }
 
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            margin: 0 auto;
-            flex: 1;
-        }
+        .container { max-width: 1000px; width: 100%; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 2rem; }
+        header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        header p { color: var(--text-muted); font-size: 0.95rem; }
 
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 768px) { .grid { grid-template-columns: 1fr 1fr; } }
 
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
         }
@@ -84,32 +49,15 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px solid var(--bg-color);
             padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--bg-color);
         }
 
-        /* 表单与输入项 */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; }
 
-        label {
-            display: block;
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-main);
-        }
-
-        .input-display-container {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
+        .input-display-container { display: flex; gap: 0.5rem; align-items: center; }
+        
         .display-box {
             flex: 1;
             background: var(--bg-color);
@@ -120,304 +68,126 @@
             font-size: 1.1rem;
             word-break: break-all;
             cursor: pointer;
-            user-select: all;
             min-height: 46px;
             display: flex;
             align-items: center;
-            transition: background 0.2s;
         }
-
-        .display-box:hover {
-            background: #f1f5f9;
-        }
+        .display-box:hover { background: #f1f5f9; }
 
         .input-text {
-            width: 100%;
-            padding: 0.75rem;
+            width: 100%; padding: 0.75rem;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: monospace;
-            outline: none;
-            text-transform: uppercase;
+            border-radius: 8px; font-size: 1rem; font-family: monospace;
+            outline: none; text-transform: uppercase;
         }
+        .input-text:focus { border-color: var(--primary); }
 
-        .input-text:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-
-        /* 按钮样式 */
         .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.25rem;
-            white-space: nowrap;
-            transition: background 0.2s;
+            background: var(--primary); color: white; border: none;
+            padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer;
+            font-weight: 500; font-size: 0.95rem; white-space: nowrap;
         }
+        .btn:hover { background: var(--primary-hover); }
 
-        .btn:hover {
-            background: var(--primary-hover);
-        }
+        .slider-container { display: flex; align-items: center; gap: 1rem; }
+        .slider-container input { flex: 1; cursor: pointer; }
+        .range-val { font-family: monospace; font-weight: bold; width: 2rem; text-align: right; }
 
-        /* 控件控制项 */
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
+        .checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
 
-        .slider-container input[type="range"] {
-            flex: 1;
-            cursor: pointer;
-        }
+        .totp-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
+        .countdown-container { display: flex; align-items: center; gap: 0.5rem; width: 100%; }
+        .progress-bar-bg { flex: 1; background: var(--border-color); height: 6px; border-radius: 3px; overflow: hidden; }
+        .progress-bar-fill { background: var(--primary); height: 100%; width: 100%; transition: width 1s linear; }
 
-        .range-val {
-            font-family: monospace;
-            font-weight: bold;
-            width: 2rem;
-            text-align: right;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-size: 0.95rem;
-        }
-
-        /* 倒计时样式 */
-        .totp-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .countdown-container {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            width: 100%;
-        }
-
-        .progress-bar-bg {
-            flex: 1;
-            background: var(--border-color);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            background: var(--primary);
-            height: 100%;
-            width: 100%;
-            transition: width 1s linear, background-color 0.3s;
-        }
-
-        /* 历史记录样式 */
-        .history-section {
-            margin-top: auto;
-            padding-top: 1.5rem;
-            border-top: 1px dashed var(--border-color);
-        }
-
-        .history-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-        }
-
-        .history-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
+        .history-section { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed var(--border-color); }
+        .history-title { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.75rem; }
+        .history-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
         .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-color);
-            padding: 0.5rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: background 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-color); padding: 0.5rem 0.75rem; border-radius: 6px;
+            font-size: 0.85rem; cursor: pointer;
         }
+        .history-item:hover { background: #f1f5f9; }
+        .history-content { font-family: monospace; word-break: break-all; flex: 1; margin-right: 0.5rem; }
+        .history-time { color: var(--text-muted); font-size: 0.75rem; margin-right: 0.5rem; }
+        .btn-sm { padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; background: white; border: 1px solid var(--border-color); cursor: pointer; }
 
-        .history-item:hover {
-            background: #f1f5f9;
-            border-color: var(--border-color);
-        }
-
-        .history-content {
-            font-family: monospace;
-            word-break: break-all;
-            margin-right: 0.5rem;
-            flex: 1;
-        }
-
-        .history-time {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            margin-right: 0.5rem;
-            white-space: nowrap;
-        }
-
-        .btn-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            border-radius: 4px;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-        }
-        .btn-sm:hover {
-            background: var(--bg-color);
-            color: var(--text-main);
-        }
-
-        /* 全局轻量级 Toast 提示提示 */
         .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            color: #ffffff;
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            pointer-events: none;
-            opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-            z-index: 9999;
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1e293b; color: white; padding: 0.6rem 1.2rem; border-radius: 50px;
+            font-size: 0.9rem; opacity: 0; transition: all 0.3s ease; z-index: 9999; pointer-events: none;
         }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        .error-text {
-            color: var(--error-color);
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
-            display: none;
-        }
-
-        footer {
-            margin-top: 3rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .error-text { color: var(--error-color); font-size: 0.8rem; margin-top: 0.25rem; display: none; }
+        footer { margin-top: 3rem; text-align: center; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <header>
-            <h1>🔐 Offline Security Toolkit</h1>
-            <p>纯前端本地离线工具箱</p>
+            <h1>冲 离线安全工具箱</h1>
+            <p>100% 纯前端本地内存运行 · 无网络请求 · 刷新即焚</p>
         </header>
 
         <div class="grid">
             <div class="card">
                 <div class="card-title">🔐 Strong Password Generator</div>
-                
                 <div class="form-group">
                     <label>Generated Password</label>
                     <div class="input-display-container">
                         <div id="passwordDisplay" class="display-box" title="点击复制"></div>
-                        <button id="btnRefreshPass" class="btn" title="重新生成">🔄</button>
-                        <button id="btnCopyPass" class="btn" title="复制">📋 Copy</button>
+                        <button id="btnRefreshPass" class="btn">🔄</button>
+                        <button id="btnCopyPass" class="btn">📋 Copy</button>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <div class="slider-container">
-                        <label for="passLength">Length:</label>
+                        <label>Length:</label>
                         <input type="range" id="passLength" min="4" max="64" value="20">
                         <span id="passLengthVal" class="range-val">20</span>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>Character Sets</label>
                     <div class="checkbox-group">
-                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="upper" checked> ABC (Uppercase)</label>
-                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="lower" checked> abc (Lowercase)</label>
-                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="digit" checked> 123 (Digits)</label>
-                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="symbol" checked> #@! (Symbols)</label>
+                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="upper" checked> ABC</label>
+                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="lower" checked> abc</label>
+                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="digit" checked> 123</label>
+                        <label class="checkbox-label"><input type="checkbox" class="pass-charset" value="symbol" checked> #@!</label>
                     </div>
                 </div>
-
                 <div class="history-section">
                     <div class="history-title">Password Recent Copies</div>
-                    <ul id="passwordHistory" class="history-list">
-                        </ul>
+                    <ul id="passwordHistory" class="history-list"></ul>
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-title">🔑 TOTP Authenticator</div>
-
                 <div class="form-group">
                     <label for="totpSecret">TOTP Secret (Base32)</label>
-                    <input type="text" id="totpSecret" class="input-text" placeholder="例如: JBSWY3DPEHPK3PXP" autocomplete="off" spellcheck="false">
-                    <div id="totpError" class="error-text">Invalid Base32 secret format.</div>
+                    <input type="text" id="totpSecret" class="input-text" placeholder="例如: JBSWY3DPEHPK3PXP" autocomplete="off">
+                    <div id="totpError" class="error-text">无效的 Base32 密钥格式</div>
                 </div>
-
                 <div class="form-group">
                     <label>Verification Code</label>
                     <div class="input-display-container">
-                        <div id="totpDisplay" class="display-box" style="font-size: 1.5rem; justify-content: center; font-weight: bold; letter-spacing: 2px;" title="点击复制">------</div>
-                        <button id="btnCopyTotp" class="btn" title="复制">📋 Copy</button>
+                        <div id="totpDisplay" class="display-box" style="font-size: 1.5rem; justify-content: center; font-weight: bold; letter-spacing: 2px;">------</div>
+                        <button id="btnCopyTotp" class="btn">📋 Copy</button>
                     </div>
                     <div class="totp-meta">
                         <div class="countdown-container">
                             <span id="totpCountdownText">Refresh in --s</span>
-                            <div class="progress-bar-bg">
-                                <div id="totpProgressBar" class="progress-bar-fill"></div>
-                            </div>
+                            <div class="progress-bar-bg"><div id="totpProgressBar" class="progress-bar-fill"></div></div>
                         </div>
                     </div>
                 </div>
-
                 <div class="history-section">
                     <div class="history-title">TOTP Recent Copies</div>
-                    <ul id="totpHistory" class="history-list">
-                        </ul>
+                    <ul id="totpHistory" class="history-list"></ul>
                 </div>
             </div>
         </div>
@@ -430,11 +200,10 @@
     <div id="toast" class="toast">Copied!</div>
 
     <script>
-        // --- 内存管理控制：历史记录数组（禁止使用 localStorage 等持久化机制） ---
+        // --- 仅运行时内存存储（严格禁止 localStorage 等） ---
         const passwordHistoryList = [];
         const totpHistoryList = [];
 
-        // 字符集定义
         const charSets = {
             upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             lower: "abcdefghijklmnopqrstuvwxyz",
@@ -442,212 +211,137 @@
             symbol: "!@#$%^&*()_+-=[]{}|;':\",./<>?"
         };
 
-        // --- 通用工具函数 ---
-        function showToast(message = "Copied!") {
+        // --- 全局 UI 工具 ---
+        function showToast(msg = "Copied!") {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            toast.textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 1000);
+            setTimeout(() => toast.classList.remove('show'), 1000);
         }
 
-        function formatTime() {
-            const now = new Date();
-            return now.toTimeString().split(' ')[0];
+        function getHHMMSS() {
+            return new Date().toTimeString().split(' ')[0];
         }
 
-        function copyToClipboard(text) {
-            if (!text || text === '------') return;
-            // 处理格式化过的 TOTP 码
-            const cleanText = text.replace(/\s+/g, '');
-            navigator.clipboard.writeText(cleanText).then(() => {
-                showToast();
-            }).catch(() => {
-                // 回退机制
-                const textArea = document.createElement("textarea");
-                textArea.value = cleanText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
+        function copyText(text) {
+            const clean = text.replace(/\s+/g, '');
+            if (!clean || clean.includes('---')) return;
+            navigator.clipboard.writeText(clean).then(() => showToast()).catch(() => {
+                const el = document.createElement('textarea');
+                el.value = clean; document.body.appendChild(el);
+                el.select(); document.execCommand('copy');
+                document.body.removeChild(el);
                 showToast();
             });
         }
 
-        // --- 历史记录渲染逻辑 ---
-        function updateHistoryUI(type) {
-            const listEl = document.getElementById(type === 'password' ? 'passwordHistory' : 'totpHistory');
-            const dataArr = type === 'password' ? passwordHistoryList : totpHistoryList;
+        // --- 历史纪录维护（保持最多5条，相同项置顶） ---
+        function handleHistory(type, val) {
+            if (!val || val.includes('---')) return;
+            const list = type === 'password' ? passwordHistoryList : totpHistoryList;
+            const idx = list.findIndex(item => item.val === val);
+            if (idx !== -1) list.splice(idx, 1);
             
-            listEl.innerHTML = '';
-            
-            dataArr.forEach((item) => {
+            list.unshift({ val, time: getHHMMSS() });
+            if (list.length > 5) list.pop();
+
+            renderHistory(type);
+        }
+
+        function renderHistory(type) {
+            const el = document.getElementById(type === 'password' ? 'passwordHistory' : 'totpHistory');
+            const list = type === 'password' ? passwordHistoryList : totpHistoryList;
+            el.innerHTML = '';
+            list.forEach(item => {
                 const li = document.createElement('li');
                 li.className = 'history-item';
-                li.onclick = () => copyHistoryItem(type, item.val);
-
-                const contentSpan = document.createElement('span');
-                contentSpan.className = 'history-content';
-                contentSpan.textContent = item.val;
-
-                const timeSpan = document.createElement('span');
-                timeSpan.className = 'history-time';
-                timeSpan.textContent = item.time;
-
-                const btn = document.createElement('button');
-                btn.className = 'btn-sm';
-                btn.textContent = '📋';
-                btn.onclick = (e) => {
-                    e.stopPropagation(); // 阻止触发 li 的事件
-                    copyHistoryItem(type, item.val);
+                li.onclick = () => { copyText(item.val); handleHistory(type, item.val); };
+                li.innerHTML = `<span class="history-content">${item.val}</span>
+                                <span class="history-time">${item.time}</span>
+                                <button class="btn-sm">📋</button>`;
+                li.querySelector('button').onclick = (e) => {
+                    e.stopPropagation();
+                    copyText(item.val);
+                    handleHistory(type, item.val);
                 };
-
-                li.appendChild(contentSpan);
-                li.appendChild(timeSpan);
-                li.appendChild(btn);
-                listEl.appendChild(li);
+                el.appendChild(li);
             });
         }
 
-        function addToHistory(type, value) {
-            if (!value || value === '------') return;
-            const dataArr = type === 'password' ? passwordHistoryList : totpHistoryList;
-            
-            // 如果已存在，删除旧记录
-            const existingIndex = dataArr.findIndex(item => item.val === value);
-            if (existingIndex !== -1) {
-                dataArr.splice(existingIndex, 1);
-            }
-            
-            // 插入到最前面
-            dataArr.unshift({ val: value, time: formatTime() });
-            
-            // 最多保持 5 条
-            if (dataArr.length > 5) {
-                dataArr.pop();
-            }
-            
-            updateHistoryUI(type);
-        }
-
-        function copyHistoryItem(type, value) {
-            copyToClipboard(value);
-            // 再次复制后，更新时间并移动到最新位置
-            addToHistory(type, value);
-        }
-
-
-        // ==========================================
-        // 功能一：🔐 Strong Password Generator 逻辑
-        // ==========================================
-        const passLengthInput = document.getElementById('passLength');
-        const passLengthVal = document.getElementById('passLengthVal');
-        const passwordDisplay = document.getElementById('passwordDisplay');
-        const btnRefreshPass = document.getElementById('btnRefreshPass');
-        const btnCopyPass = document.getElementById('btnCopyPass');
-        const checkboxes = document.querySelectorAll('.pass-charset');
-
-        // 强安全随机数生成器
-        function secureRandomInt(max) {
-            const array = new Uint32Array(1);
-            window.crypto.getRandomValues(array);
-            return array[0] % max;
+        // --- 功能一：安全强密码逻辑 ---
+        function getCryptoRandInt(max) {
+            const arr = new Uint32Array(1);
+            window.crypto.getRandomValues(arr);
+            return arr[0] % max;
         }
 
         function generatePassword() {
-            const length = parseInt(passLengthInput.value);
-            let activePools = [];
-            let passwordArr = [];
+            const len = parseInt(document.getElementById('passLength').value);
+            const checkboxes = document.querySelectorAll('.pass-charset:checked');
+            if (checkboxes.length === 0) return;
 
-            // 检查并记录勾选的字符集
+            let pwdArr = [];
+            let fullPool = "";
+
+            // 1. 强制保证每种选中的字符集至少出一个
             checkboxes.forEach(cb => {
-                if (cb.checked) {
-                    activePools.push(charSets[cb.value]);
-                }
+                const pool = charSets[cb.value];
+                pwdArr.push(pool[getCryptoRandInt(pool.length)]);
+                fullPool += pool;
             });
 
-            // 如果一个都没勾选（虽然有事件拦截，这里做二次兜底）
-            if (activePools.length === 0) return;
-
-            // 规则保证：每种被勾选的类型必须先包含至少一个字符
-            activePools.forEach(pool => {
-                const randIndex = secureRandomInt(pool.length);
-                passwordArr.push(pool[randIndex]);
-            });
-
-            // 拼接所有可用字符，用于填满剩余长度
-            let fullPool = activePools.join('');
-
-            // 随机填充剩余长度
-            while (passwordArr.length < length) {
-                const randIndex = secureRandomInt(fullPool.length);
-                passwordArr.push(fullPool[randIndex]);
-            });
-
-            // 洗牌算法（Fisher-Yates），用 secureRandomInt 进行高强度完全乱序
-            for (let i = passwordArr.length - 1; i > 0; i--) {
-                const j = secureRandomInt(i + 1);
-                const temp = passwordArr[i];
-                passwordArr[i] = passwordArr[j];
-                passwordArr[j] = temp;
+            // 2. 补齐剩余长度 （修复了上一版将 while 条件写错产生的卡死问题）
+            while (pwdArr.length < len) {
+                pwdArr.push(fullPool[getCryptoRandInt(fullPool.length)]);
             }
 
-            const finalPassword = passwordArr.join('');
-            passwordDisplay.textContent = finalPassword;
+            // 3. Fisher-Yates 洗牌乱序
+            for (let i = pwdArr.length - 1; i > 0; i--) {
+                const j = getCryptoRandInt(i + 1);
+                [pwdArr[i], pwdArr[j]] = [pwdArr[j], pwdArr[i]];
+            }
+
+            document.getElementById('passwordDisplay').textContent = pwdArr.join('');
         }
 
-        // 密码事件监听
-        passLengthInput.addEventListener('input', (e) => {
-            passLengthVal.textContent = e.target.value;
+        // 密码事件绑定
+        document.getElementById('passLength').addEventListener('input', (e) => {
+            document.getElementById('passLengthVal').textContent = e.target.value;
             generatePassword();
         });
-
-        checkboxes.forEach(cb => {
+        document.querySelectorAll('.pass-charset').forEach(cb => {
             cb.addEventListener('change', (e) => {
-                // 确保至少保留一个选项
-                const checkedCount = document.querySelectorAll('.pass-charset:checked').length;
-                if (checkedCount === 0) {
-                    e.target.checked = true; // 强行拉回勾选
+                if (document.querySelectorAll('.pass-charset:checked').length === 0) {
+                    e.target.checked = true;
                     alert("At least one character set must be selected.");
                     return;
                 }
                 generatePassword();
             });
         });
-
-        btnRefreshPass.addEventListener('click', generatePassword);
+        document.getElementById('btnRefreshPass').addEventListener('click', generatePassword);
         
-        const handleCopyPassAction = () => {
-            const p = passwordDisplay.textContent;
-            if (p) {
-                copyToClipboard(p);
-                addToHistory('password', p);
-            }
+        const copyPassAct = () => {
+            const txt = document.getElementById('passwordDisplay').textContent;
+            copyText(txt); handleHistory('password', txt);
         };
-        btnCopyPass.addEventListener('click', handleCopyPassAction);
-        passwordDisplay.addEventListener('click', handleCopyPassAction);
+        document.getElementById('btnCopyPass').addEventListener('click', copyPassAct);
+        document.getElementById('passwordDisplay').addEventListener('click', copyPassAct);
 
 
         // ==========================================
-        // 功能二：🔑 TOTP 算法的原生 Web Crypto 实现
+        // 功能二：🔑 TOTP 算法原生 Web Crypto 实现
         // ==========================================
-        
-        // 1. Base32 解码为 Uint8Array
-        function base32ToBytes(base32) {
-            base32 = base32.replace(/\s+/g, '').replace(/=/g, '').toUpperCase();
-            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ2347";
-            let bits = 0;
-            let value = 0;
-            const bytes = [];
+        function base32ToBytes(b32) {
+            b32 = b32.replace(/\s+/g, '').replace(/=/g, '').toUpperCase();
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"; // 修复了之前的基数表拼写丢失
+            let bits = 0, value = 0, bytes = [];
 
-            for (let i = 0; i < base32.length; i++) {
-                const idx = alphabet.indexOf(base32[i]);
-                if (idx === -1) throw new Error("Invalid base32 character");
-                
+            for (let i = 0; i < b32.length; i++) {
+                const idx = alphabet.indexOf(b32[i]);
+                if (idx === -1) throw new Error();
                 value = (value << 5) | idx;
                 bits += 5;
-
                 if (bits >= 8) {
                     bytes.push((value >>> (bits - 8)) & 255);
                     bits -= 8;
@@ -656,122 +350,73 @@
             return new Uint8Array(bytes);
         }
 
-        // 2. 使用原生 Web Crypto API 实现 HMAC-SHA1 并提取 6 位 TOTP
-        async function generateTOTP(secretBase32) {
+        async function calcTOTP(secretB32) {
             try {
-                const keyBytes = base32ToBytes(secretBase32);
+                const keyBytes = base32ToBytes(secretB32);
                 if (keyBytes.length === 0) return null;
 
-                // 计数器：以 30 秒为单位的时间戳
                 const epoch = Math.floor(Date.now() / 1000);
                 const counter = Math.floor(epoch / 30);
 
-                // 将 64 位整数 counter 转换成 8 字节的 Uint8Array
                 const counterBytes = new ArrayBuffer(8);
                 const view = new DataView(counterBytes);
-                // JavaScript 按位操作只支持 32 位，所以需要拆分高低 32 位分别写入
-                view.setUint32(0, 0); 
+                view.setUint32(0, 0);
                 view.setUint32(4, counter);
 
-                // 使用 Web Crypto API 导入 HMAC 密钥
                 const cryptoKey = await window.crypto.subtle.importKey(
-                    "raw",
-                    keyBytes,
-                    { name: "HMAC", hash: { name: "SHA-1" } },
-                    false,
-                    ["sign"]
+                    "raw", keyBytes, { name: "HMAC", hash: { name: "SHA-1" } }, false, ["sign"]
                 );
-
-                // 计算 HMAC-SHA1 签名
-                const hmacResult = await window.crypto.subtle.sign(
-                    "HMAC",
-                    cryptoKey,
-                    counterBytes
-                );
-
+                const hmacResult = await window.crypto.subtle.sign("HMAC", cryptoKey, counterBytes);
                 const hmacBytes = new Uint8Array(hmacResult);
 
-                // 动态截断算法 (Dynamic Truncation)
                 const offset = hmacBytes[hmacBytes.length - 1] & 0xf;
-                const codeInt =
-                    ((hmacBytes[offset] & 0x7f) << 24) |
-                    ((hmacBytes[offset + 1] & 0xff) << 16) |
-                    ((hmacBytes[offset + 2] & 0xff) << 8) |
-                    (hmacBytes[offset + 3] & 0xff);
+                const codeInt = ((hmacBytes[offset] & 0x7f) << 24) |
+                                ((hmacBytes[offset + 1] & 0xff) << 16) |
+                                ((hmacBytes[offset + 2] & 0xff) << 8) |
+                                (hmacBytes[offset + 3] & 0xff);
 
-                // 取模 10^6 获得 6 位验证码
-                let codeStr = (codeInt % 1000000).toString();
-                while (codeStr.length < 6) {
-                    codeStr = "0" + codeStr;
-                }
-                
-                // 将 6 位验证码格式化为 "123 456" 易读模式
+                let codeStr = (codeInt % 1000000).toString().padStart(6, '0');
                 return codeStr.slice(0, 3) + " " + codeStr.slice(3);
-            } catch (e) {
-                return null;
-            }
+            } catch (e) { return null; }
         }
 
-        // TOTP 定时更新与界面维护
-        const totpSecretInput = document.getElementById('totpSecret');
-        const totpDisplay = document.getElementById('totpDisplay');
-        const totpCountdownText = document.getElementById('totpCountdownText');
-        const totpProgressBar = document.getElementById('totpProgressBar');
-        const totpError = document.getElementById('totpError');
-        const btnCopyTotp = document.getElementById('btnCopyTotp');
-
         async function updateTotpLoop() {
-            const secret = totpSecretInput.value.trim();
+            const secret = document.getElementById('totpSecret').value.trim();
+            const remaining = 30 - (Math.floor(Date.now() / 1000) % 30);
             
-            // 计算当前周期的剩余时间进度
-            const epoch = Math.floor(Date.now() / 1000);
-            const remaining = 30 - (epoch % 30);
-            
-            // 进度条比率
-            const progressWidth = (remaining / 30) * 100;
-            totpProgressBar.style.width = progressWidth + "%";
-            totpCountdownText.textContent = `Refresh in ${remaining}s`;
+            document.getElementById('totpProgressBar').style.width = (remaining / 30) * 100 + "%";
+            document.getElementById('totpCountdownText').textContent = `Refresh in ${remaining}s`;
 
             if (!secret) {
-                totpDisplay.textContent = '------';
-                totpError.style.display = 'none';
+                document.getElementById('totpDisplay').textContent = '------';
+                document.getElementById('totpError').style.display = 'none';
                 return;
             }
 
-            const code = await generateTOTP(secret);
+            const code = await calcTOTP(secret);
             if (code) {
-                totpDisplay.textContent = code;
-                totpError.style.display = 'none';
+                document.getElementById('totpDisplay').textContent = code;
+                document.getElementById('totpError').style.display = 'none';
             } else {
-                totpDisplay.textContent = '------';
-                totpError.style.display = 'block';
+                document.getElementById('totpDisplay').textContent = '------';
+                document.getElementById('totpError').style.display = 'block';
             }
         }
 
-        // 监听输入框，输入时立即触发计算
-        totpSecretInput.addEventListener('input', updateTotpLoop);
-
-        // 复制响应
-        const handleCopyTotpAction = () => {
-            const code = totpDisplay.textContent;
-            if (code && code !== '------') {
-                copyToClipboard(code);
-                addToHistory('totp', code);
-            }
+        document.getElementById('totpSecret').addEventListener('input', updateTotpLoop);
+        
+        const copyTotpAct = () => {
+            const txt = document.getElementById('totpDisplay').textContent;
+            copyText(txt); handleHistory('totp', txt);
         };
-        btnCopyTotp.addEventListener('click', handleCopyTotpAction);
-        totpDisplay.addEventListener('click', handleCopyTotpAction);
+        document.getElementById('btnCopyTotp').addEventListener('click', copyTotpAct);
+        document.getElementById('totpDisplay').addEventListener('click', copyTotpAct);
 
-        // 每隔一秒对倒计时和计算刷新一次状态
-        setInterval(updateTotpLoop, 1000);
-
-
-        // ==========================================
-        // 初始化流程
-        // ==========================================
+        // 初始化
         window.addEventListener('DOMContentLoaded', () => {
             generatePassword();
             updateTotpLoop();
+            setInterval(updateTotpLoop, 1000);
         });
     </script>
 </body>
