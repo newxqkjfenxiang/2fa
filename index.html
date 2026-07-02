@@ -20,8 +20,8 @@
         
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
-            color: #e2e8f0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+            color: #1e2937;
             min-height: 100vh;
             padding: 24px 16px;
         }
@@ -29,15 +29,16 @@
         .container {
             max-width: 1280px;
             margin: 0 auto;
-            background: rgba(15, 23, 42, 0.95);
+            background: white;
             border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
             overflow: hidden;
-            border: 1px solid rgba(148, 163, 184, 0.2);
+            border: 1px solid #e2e8f0;
         }
         
         header {
-            background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            color: white;
             padding: 2.5rem 2rem;
             text-align: center;
             position: relative;
@@ -50,7 +51,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
         }
         
         h1 {
@@ -61,7 +62,7 @@
         }
         
         .subtitle {
-            opacity: 0.85;
+            opacity: 0.9;
             margin-top: 8px;
             font-size: 1.05rem;
         }
@@ -70,11 +71,11 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2px;
-            background: #1e2937;
+            background: #e2e8f0;
         }
         
         .section {
-            background: #0f172a;
+            background: white;
             padding: 2.5rem;
             display: flex;
             flex-direction: column;
@@ -95,8 +96,8 @@
         
         /* 密码区域 */
         .password-card {
-            background: #1e2937;
-            border: 2px solid #334155;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
             border-radius: 20px;
             padding: 1.75rem 1.5rem;
             font-family: 'Space Grotesk', monospace;
@@ -112,14 +113,15 @@
         }
         
         .password-card:hover {
-            border-color: #60a5fa;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgb(37 99 235 / 0.3);
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.2);
         }
         
         .password-text {
             flex: 1;
             word-break: break-all;
+            color: #1e2937;
         }
         
         .copy-btn {
@@ -127,9 +129,9 @@
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            background: #334155;
-            color: #e2e8f0;
-            border: none;
+            background: white;
+            color: #475569;
+            border: 1px solid #cbd5e1;
             padding: 10px 18px;
             border-radius: 9999px;
             font-size: 0.95rem;
@@ -142,8 +144,9 @@
         }
         
         .copy-btn:hover {
-            background: #2563eb;
-            transform: translateY(-50%) scale(1.05);
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #60a5fa;
         }
         
         /* 控制区域 */
@@ -166,15 +169,15 @@
         .length-value {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #60a5fa;
+            color: #2563eb;
         }
         
         input[type="range"] {
             width: 100%;
-            accent-color: #60a5fa;
+            accent-color: #2563eb;
             height: 6px;
             border-radius: 9999px;
-            background: #334155;
+            background: #e2e8f0;
         }
         
         .checkbox-group {
@@ -187,15 +190,17 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            background: #1e2937;
+            background: #f8fafc;
             padding: 12px 16px;
             border-radius: 12px;
             cursor: pointer;
+            border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
         
         .checkbox-item:hover {
-            background: #334155;
+            background: #f0f9ff;
+            border-color: #bfdbfe;
         }
         
         .generate-btn {
@@ -217,12 +222,13 @@
         
         .generate-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px -5px rgb(37 99 235 / 0.5);
+            box-shadow: 0 10px 20px -5px rgb(37 99 235 / 0.4);
         }
         
         /* TOTP 区域 */
         .totp-card {
-            background: #1e2937;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
             border-radius: 20px;
             padding: 2rem 1.5rem;
             text-align: center;
@@ -236,6 +242,7 @@
             letter-spacing: 12px;
             font-weight: 700;
             margin-bottom: 1rem;
+            color: #1e2937;
             transition: all 0.4s ease;
         }
         
@@ -251,7 +258,7 @@
         
         .progress-container {
             height: 8px;
-            background: #334155;
+            background: #e2e8f0;
             border-radius: 9999px;
             overflow: hidden;
             margin: 20px 0;
@@ -266,9 +273,9 @@
         
         .totp-secret-input {
             width: 100%;
-            background: #1e2937;
-            border: 2px solid #475569;
-            color: #e2e8f0;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e2937;
             padding: 16px 18px;
             border-radius: 16px;
             font-family: monospace;
@@ -278,19 +285,19 @@
         
         .totp-secret-input:focus {
             outline: none;
-            border-color: #60a5fa;
+            border-color: #3b82f6;
         }
         
         /* 历史记录 */
         .history {
             margin-top: auto;
             padding-top: 2rem;
-            border-top: 1px solid #334155;
+            border-top: 1px solid #e2e8f0;
         }
         
         .history-title {
             font-size: 1.05rem;
-            color: #94a3b8;
+            color: #64748b;
             margin-bottom: 1rem;
             font-weight: 500;
         }
@@ -307,14 +314,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #1e2937;
+            background: #f8fafc;
             padding: 12px 16px;
             border-radius: 14px;
+            border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
         
         .history-item:hover {
-            background: #334155;
+            background: #f0f9ff;
+            border-color: #bfdbfe;
             transform: translateX(4px);
         }
         
@@ -322,6 +331,7 @@
             font-family: monospace;
             font-size: 1.05rem;
             flex: 1;
+            color: #1e2937;
         }
         
         .history-time {
@@ -336,11 +346,11 @@
             left: 50%;
             transform: translateX(-50%);
             background: #1e2937;
-            color: #e2e8f0;
+            color: white;
             padding: 14px 32px;
             border-radius: 9999px;
             font-weight: 500;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -351,11 +361,11 @@
         
         footer {
             text-align: center;
-            padding: 2rem;
+            padding: 2.2rem;
             color: #64748b;
             font-size: 0.95rem;
             line-height: 1.6;
-            background: #0f172a;
+            background: #f8fafc;
         }
         
         @media (max-width: 768px) {
@@ -449,7 +459,7 @@
                         <div class="progress-bar" id="progress-bar"></div>
                     </div>
                     
-                    <div style="font-size: 0.95rem; color: #94a3b8;" id="time-remaining">30 秒后刷新</div>
+                    <div style="font-size: 0.95rem; color: #64748b;" id="time-remaining">30 秒后刷新</div>
                 </div>
                 
                 <input type="text" id="totp-secret" 
@@ -578,7 +588,6 @@
                 password += chars[randomValues[i] % chars.length];
             }
             
-            // 打乱
             const arr = password.split('');
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = randomValues[i] % (i + 1);
@@ -665,7 +674,6 @@
             
             bar.style.width = `${progress}%`;
             
-            // 颜色渐变
             if (progress > 60) {
                 bar.style.background = 'linear-gradient(90deg, #22c55e, #86efac)';
             } else if (progress > 30) {
@@ -700,12 +708,10 @@
                 updatePassword();
             });
             
-            // 复选框
             ['upper','lower','numbers','special'].forEach(id => {
                 document.getElementById(id).addEventListener('change', updatePassword);
             });
             
-            // 生成按钮
             document.getElementById('generate-btn').addEventListener('click', updatePassword);
             
             // 密码复制
