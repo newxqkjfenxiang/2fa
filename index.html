@@ -3,454 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline Security Toolkit</title>
+    <title>咪麦工具箱</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap');
+        
         :root {
-            --paper: #eef1ec;
-            --panel: #ffffff;
-            --ink: #16211c;
-            --ink-soft: #5c6b61;
-            --line: #d9e0d8;
-            --vault: #1f6f5c;
-            --vault-soft: #e2efe9;
-            --brass: #b9893e;
-            --warn: #b9893e;
-            --alarm: #c8412b;
-            --glow-safe: rgba(31, 111, 92, 0.30);
-            --glow-warn: rgba(185, 137, 62, 0.40);
-            --glow-danger: rgba(200, 65, 43, 0.55);
-            --mono: ui-monospace, 'SF Mono', 'Space Grotesk', Menlo, Consolas, monospace;
+            --primary: #2563eb;
+            --success: #22c55e;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background:
-                radial-gradient(1200px 400px at 50% -10%, rgba(31,111,92,0.06), transparent),
-                repeating-linear-gradient(90deg, transparent, transparent 41px, rgba(22,33,28,0.025) 42px),
-                var(--paper);
-            color: var(--ink);
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+            color: #1e2937;
             min-height: 100vh;
-            padding: 28px 18px 48px;
+            padding: 24px 16px;
         }
-
+        
         .container {
-            max-width: 1120px;
+            max-width: 1280px;
             margin: 0 auto;
-            background: var(--panel);
-            border-radius: 18px;
-            border: 1px solid var(--line);
-            box-shadow: 0 30px 60px -30px rgba(22,33,28,0.25);
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
             overflow: hidden;
-            animation: rise 0.5s cubic-bezier(0.16,1,0.3,1);
+            border: 1px solid #e2e8f0;
         }
-
-        @keyframes rise {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        
         header {
-            background:
-                linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 60%),
-                linear-gradient(135deg, #16332b, #1f6f5c 60%, #245e4f);
-            color: #f3f6f2;
-            padding: 2.1rem 2rem 1.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
             position: relative;
         }
+        
         header::after {
             content: '';
             position: absolute;
-            left: 0; right: 0; bottom: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--brass), transparent 70%);
-            opacity: 0.85;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
         }
-
-        .header-title { display: flex; align-items: center; gap: 14px; }
-        .header-mark {
-            width: 42px; height: 42px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.25);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
-        }
+        
         h1 {
             font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.55rem;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            line-height: 1.2;
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
+        
         .subtitle {
-            font-family: var(--mono);
-            font-size: 0.8rem;
-            color: rgba(243,246,242,0.75);
-            margin-top: 4px;
-            letter-spacing: 0.3px;
+            opacity: 0.9;
+            margin-top: 8px;
+            font-size: 1.05rem;
         }
-        .badge {
-            font-family: var(--mono);
-            font-size: 0.72rem;
-            letter-spacing: 0.4px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.28);
-            color: #f3f6f2;
-            padding: 7px 13px;
-            border-radius: 999px;
-            white-space: nowrap;
-        }
-
+        
         .main {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1px;
-            background: var(--line);
+            gap: 2px;
+            background: #e2e8f0;
         }
-
+        
         .section {
-            background: var(--panel);
-            padding: 2rem 2rem 1.8rem;
+            background: white;
+            padding: 2.5rem;
             display: flex;
             flex-direction: column;
         }
-
-        .eyebrow {
-            font-family: var(--mono);
-            font-size: 0.72rem;
-            letter-spacing: 1.2px;
-            color: var(--brass);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
+        
         .section-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 1.4rem;
-            padding-bottom: 1.1rem;
-            border-bottom: 1px solid var(--line);
+            gap: 14px;
+            margin-bottom: 2rem;
         }
-
-        .section-icon {
-            width: 38px; height: 38px;
-            border-radius: 9px;
-            background: var(--vault-soft);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.15rem;
-            flex-shrink: 0;
-        }
-
+        
         .section-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.25rem;
+            font-size: 1.65rem;
             font-weight: 600;
+            letter-spacing: -0.3px;
         }
-
-        .password-display {
-            background: var(--vault-soft);
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 1.1rem 4.6rem 1.1rem 1.3rem;
-            font-family: var(--mono);
-            font-size: 1.25rem;
-            letter-spacing: 1px;
-            word-break: break-all;
-            min-height: 60px;
+        
+        /* 密码区域 */
+        .password-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.75rem 1.5rem;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1.55rem;
+            letter-spacing: 3px;
+            line-height: 1.3;
+            min-height: 88px;
             display: flex;
             align-items: center;
-            cursor: pointer;
-            transition: border-color 0.18s ease, background 0.18s ease;
             position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .password-display:hover { border-color: var(--vault); background: #dcede5; }
-
+        
+        .password-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.2);
+        }
+        
+        .password-text {
+            flex: 1;
+            word-break: break-all;
+            color: #1e2937;
+        }
+        
         .copy-btn {
             position: absolute;
-            right: 10px;
+            right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            background: var(--panel);
-            border: 1px solid var(--line);
-            color: var(--ink-soft);
-            padding: 7px 13px;
-            border-radius: 999px;
-            font-size: 0.82rem;
-            font-weight: 500;
+            background: white;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 10px 18px;
+            border-radius: 9999px;
+            font-size: 0.95rem;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 5px;
-            transition: all 0.18s ease;
+            gap: 6px;
+            transition: all 0.2s;
         }
-        .copy-btn:hover { background: var(--vault); border-color: var(--vault); color: #fff; }
-
-        .controls { margin: 1.4rem 0; }
-        .slider-container { margin-bottom: 1.4rem; }
+        
+        .copy-btn:hover {
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #60a5fa;
+        }
+        
+        /* 控制区域 */
+        .controls {
+            margin: 2rem 0;
+        }
+        
+        .slider-container {
+            margin-bottom: 1.8rem;
+        }
+        
         .slider-label {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            align-items: center;
+            margin-bottom: 10px;
             font-weight: 500;
-            font-size: 0.92rem;
         }
-        input[type="range"] { width: 100%; accent-color: var(--vault); }
+        
         .length-value {
-            font-family: var(--mono);
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--vault);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2563eb;
         }
-
+        
+        input[type="range"] {
+            width: 100%;
+            accent-color: #2563eb;
+            height: 6px;
+            border-radius: 9999px;
+            background: #e2e8f0;
+        }
+        
         .checkbox-group {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 1.4rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
         }
+        
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            border: 1px solid var(--line);
-            border-radius: 9px;
-            padding: 9px 11px;
-            transition: border-color 0.15s ease, background 0.15s ease;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
         }
-        .checkbox-item:has(input:checked) { border-color: var(--vault); background: var(--vault-soft); }
-        .checkbox-item input { accent-color: var(--vault); width: 15px; height: 15px; }
-
-        #generate-btn {
-            flex: 1;
-            padding: 13px;
-            background: var(--vault);
-            color: #fff;
+        
+        .checkbox-item:hover {
+            background: #f0f9ff;
+            border-color: #bfdbfe;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            color: white;
             border: none;
-            border-radius: 11px;
+            border-radius: 16px;
+            font-size: 1.1rem;
             font-weight: 600;
-            font-size: 1rem;
             cursor: pointer;
-            transition: background 0.18s ease, transform 0.08s ease;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-        #generate-btn:hover { background: #185a4a; }
-        #generate-btn:active { transform: scale(0.985); }
-
-        .secret-input {
-            width: 100%;
-            padding: 13px 15px;
-            border: 1px solid var(--line);
-            border-radius: 11px;
-            font-size: 0.95rem;
-            font-family: var(--mono);
-            margin-bottom: 1.1rem;
-            background: var(--panel);
-            color: var(--ink);
-            transition: border-color 0.15s ease;
-        }
-        .secret-input:focus { outline: none; border-color: var(--vault); }
-
-        .totp-display {
-            background: linear-gradient(135deg, #16332b, #1f6f5c);
-            color: #fff;
-            border-radius: 14px;
-            padding: 1.4rem;
-            font-size: 2.05rem;
-            font-family: var(--mono);
-            font-weight: 600;
-            letter-spacing: 7px;
-            text-align: center;
-            margin-bottom: 0.9rem;
-            cursor: pointer;
-            transition: box-shadow 0.4s ease;
-        }
-
-        .fuse-wrap { margin-bottom: 1.5rem; }
-        .fuse-track {
-            --intensity: 0;
-            position: relative;
-            width: 100%;
-            height: 8px;
-            border-radius: 999px;
-            background: var(--vault-soft);
-            overflow: hidden;
-            box-shadow: 0 0 calc(var(--intensity) * 16px) calc(var(--intensity) * 2px) var(--glow-color, transparent);
-            transition: box-shadow 0.5s ease;
-        }
-        .fuse-fill {
-            height: 100%;
-            width: 100%;
-            border-radius: 999px;
-            background: var(--vault);
-            transition: width 1s linear, background-color 0.5s ease;
-        }
-        .fuse-track.safe   { --glow-color: var(--glow-safe); }
-        .fuse-track.warn   { --glow-color: var(--glow-warn); }
-        .fuse-track.warn .fuse-fill   { background: var(--warn); }
-        .fuse-track.danger { --glow-color: var(--glow-danger); }
-        .fuse-track.danger .fuse-fill { background: var(--alarm); }
-        .fuse-track.danger { animation: pulse-track 0.9s ease-in-out infinite; }
-
-        @keyframes pulse-track {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.6); }
-        }
-
-        .fuse-caption {
             display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-family: var(--mono);
-            font-size: 0.72rem;
-            color: var(--ink-soft);
-            letter-spacing: 0.3px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
         }
-
-        #copy-totp-btn {
-            flex: 1;
-            padding: 12px;
-            background: var(--vault);
-            color: #fff;
-            border: none;
-            border-radius: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Space Grotesk', sans-serif;
-            transition: background 0.18s ease, transform 0.08s ease;
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgb(37 99 235 / 0.4);
         }
-        #copy-totp-btn:hover { background: #185a4a; }
-        #copy-totp-btn:active { transform: scale(0.985); }
-
-        .history { margin-top: auto; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+        
+        /* TOTP 区域 */
+        .totp-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .totp-code {
+            font-size: 3.2rem;
+            font-family: monospace;
+            letter-spacing: 12px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #1e2937;
+            transition: all 0.4s ease;
+        }
+        
+        .totp-code.flash {
+            animation: flash 0.6s ease;
+        }
+        
+        @keyframes flash {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        
+        .progress-container {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #eab308);
+            width: 100%;
+            transition: width 0.3s linear, background 0.4s ease;
+        }
+        
+        .totp-secret-input {
+            width: 100%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e2937;
+            padding: 16px 18px;
+            border-radius: 16px;
+            font-family: monospace;
+            font-size: 1.05rem;
+            margin-top: 1.5rem;
+        }
+        
+        .totp-secret-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        /* 历史记录 */
+        .history {
+            margin-top: auto;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
         .history-title {
-            font-family: var(--mono);
-            font-size: 0.75rem;
-            letter-spacing: 0.6px;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--ink-soft);
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+            font-weight: 500;
         }
+        
         .history-list {
             display: flex;
             flex-direction: column;
-            gap: 7px;
-            max-height: 240px;
+            gap: 10px;
+            max-height: 280px;
             overflow-y: auto;
         }
+        
         .history-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--paper);
-            border: 1px solid var(--line);
-            padding: 9px 12px;
-            border-radius: 9px;
-            font-family: var(--mono);
-            font-size: 0.92rem;
-            cursor: pointer;
-            transition: all 0.15s ease;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
         }
-        .history-item:hover { background: var(--vault-soft); border-color: var(--vault); }
-        .history-time { font-size: 0.75rem; color: var(--ink-soft); }
-
+        
+        .history-item:hover {
+            background: #f0f9ff;
+            border-color: #bfdbfe;
+            transform: translateX(4px);
+        }
+        
+        .history-text {
+            font-family: monospace;
+            font-size: 1.05rem;
+            flex: 1;
+            color: #1e2937;
+        }
+        
+        .history-time {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        
+        /* Toast */
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--ink);
-            color: #fff;
-            padding: 11px 26px;
-            border-radius: 999px;
-            font-size: 0.92rem;
-            font-family: var(--mono);
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+            background: #1e2937;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 9999px;
+            font-weight: 500;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
             opacity: 0;
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .toast.show { opacity: 1; }
-
+        
         footer {
             text-align: center;
-            padding: 1.8rem 2rem;
-            background: var(--paper);
-            border-top: 1px solid var(--line);
-            color: var(--ink-soft);
-            font-size: 0.88rem;
+            padding: 2.2rem;
+            color: #64748b;
+            font-size: 0.95rem;
             line-height: 1.6;
+            background: #f8fafc;
         }
-        footer p:first-child strong { color: var(--ink); }
-        footer p:last-child { margin-top: 10px; font-size: 0.78rem; font-family: var(--mono); color: var(--ink-soft); }
-
+        
         @media (max-width: 768px) {
-            .main { grid-template-columns: 1fr; }
-            h1 { font-size: 1.3rem; }
-            .password-display { padding-right: 1.3rem; flex-direction: column; align-items: flex-start; gap: 8px; }
-            .copy-btn { position: static; transform: none; margin-top: 10px; align-self: flex-start; }
+            .main {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .totp-code {
+                font-size: 2.6rem;
+                letter-spacing: 8px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="header-title">
-                <div class="header-mark">🔐</div>
-                <div>
-                    <h1>Offline Security Toolkit</h1>
-                    <div class="subtitle">纯前端 · 完全离线 · 本地安全工具</div>
-                </div>
-            </div>
-            <span class="badge">100% local · no network</span>
+            <h1>🔐 Offline Security Toolkit</h1>
+            <p class="subtitle">纯前端 • 完全离线 • 本地安全工具</p>
         </header>
-
+        
         <div class="main">
             <!-- 强密码生成器 -->
             <div class="section">
-                <div class="eyebrow">Module 01</div>
                 <div class="section-header">
-                    <div class="section-icon">🔐</div>
+                    <span style="font-size: 2rem;">🔐</span>
                     <h2 class="section-title">强密码生成器</h2>
                 </div>
-
-                <div class="password-display" id="password-display">
-                    <span id="password-text">Loading...</span>
+                
+                <div class="password-card" id="password-card">
+                    <div class="password-text" id="password-text">P@ssw0rdExample2025!</div>
                     <button class="copy-btn" id="copy-password-btn">
-                        📋 Copy
+                        📋 复制
                     </button>
                 </div>
-
+                
                 <div class="controls">
                     <div class="slider-container">
                         <div class="slider-label">
                             <span>密码长度</span>
                             <span class="length-value" id="length-value">20</span>
                         </div>
-                        <input type="range" id="length-slider"
-                               min="4" max="64" value="20" step="1">
+                        <input type="range" id="length-slider" 
+                               min="8" max="64" value="20" step="1">
                     </div>
-
+                    
                     <div class="checkbox-group">
                         <label class="checkbox-item">
                             <input type="checkbox" id="upper" checked>
-                            <span>ABC 大写字母</span>
+                            <span>ABC 大写</span>
                         </label>
                         <label class="checkbox-item">
                             <input type="checkbox" id="lower" checked>
-                            <span>abc 小写字母</span>
+                            <span>abc 小写</span>
                         </label>
                         <label class="checkbox-item">
                             <input type="checkbox" id="numbers" checked>
@@ -458,429 +429,327 @@
                         </label>
                         <label class="checkbox-item">
                             <input type="checkbox" id="special" checked>
-                            <span>#@! 特殊符号</span>
+                            <span>#@! 符号</span>
                         </label>
                     </div>
                 </div>
-
-                <div style="display: flex; gap: 12px; margin-bottom: 2rem;">
-                    <button id="generate-btn">
-                        🔄 重新生成
-                    </button>
-                </div>
-
-                <!-- 历史记录 -->
+                
+                <button id="generate-btn" class="generate-btn">
+                    🔄 重新生成密码
+                </button>
+                
+                <!-- 历史 -->
                 <div class="history">
-                    <div class="history-title">最近复制的密码</div>
+                    <div class="history-title">📋 最近复制的密码</div>
                     <div class="history-list" id="password-history"></div>
                 </div>
             </div>
-
-            <!-- TOTP 验证器 -->
+            
+            <!-- TOTP -->
             <div class="section">
-                <div class="eyebrow">Module 02</div>
                 <div class="section-header">
-                    <div class="section-icon">🔑</div>
-                    <h2 class="section-title">TOTP 验证码</h2>
+                    <span style="font-size: 2rem;">🔑</span>
+                    <h2 class="section-title">TOTP 两步验证码</h2>
                 </div>
-
-                <input type="text" id="totp-secret"
-                       class="secret-input"
-                       placeholder="输入 Base32 Secret (例如: JBSWY3DPEHPK3PXP)"
-                       spellcheck="false">
-
-                <div class="totp-display" id="totp-display">
-                    <span id="totp-code">------</span>
-                </div>
-
-                <div class="fuse-wrap">
-                    <div class="fuse-track safe" id="fuse-track">
-                        <div class="fuse-fill" id="fuse-fill"></div>
+                
+                <div class="totp-card">
+                    <div class="totp-code" id="totp-code">------</div>
+                    
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
                     </div>
-                    <div class="fuse-caption">
-                        <span>刷新周期</span>
-                        <span>30s</span>
-                    </div>
+                    
+                    <div style="font-size: 0.95rem; color: #64748b;" id="time-remaining">30 秒后刷新</div>
                 </div>
-
-                <div style="display: flex; gap: 12px; margin-bottom: 1.5rem;">
-                    <button id="copy-totp-btn">
-                        📋 复制验证码
-                    </button>
-                </div>
-
-                <!-- 历史记录 -->
+                
+                <input type="text" id="totp-secret" 
+                       class="totp-secret-input"
+                       placeholder="输入 Base32 Secret（如 JBSWY3DPEHPK3PXP）"
+                       spellcheck="false" autocomplete="off">
+                
+                <button id="copy-totp-btn"
+                        style="margin-top: 1.5rem; width: 100%; padding: 16px; background: linear-gradient(90deg, #2563eb, #3b82f6); color: white; border: none; border-radius: 16px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                    📋 复制验证码
+                </button>
+                
+                <!-- 历史 -->
                 <div class="history">
-                    <div class="history-title">最近复制的验证码</div>
+                    <div class="history-title">📋 最近复制的验证码</div>
                     <div class="history-list" id="totp-history"></div>
                 </div>
             </div>
         </div>
-
+        
         <footer>
-            <p><strong>此工具完全离线运行。</strong>所有密码、TOTP 密钥、验证码及复制历史记录均仅在浏览器内存中处理，不会存储、上传或传输任何数据。刷新或关闭页面后，所有数据都会被永久清除。</p>
-            <p>使用 Web Crypto API 实现安全随机数与 HMAC-SHA1 · 符合 RFC 6238</p>
+            <p>此工具完全离线运行。所有数据仅在浏览器内存中处理，不会存储或上传任何信息。<br>
+            刷新或关闭页面后，所有记录将永久清除。</p>
         </footer>
     </div>
-
-    <div class="toast" id="toast">Copied!</div>
+    
+    <div class="toast" id="toast">
+        <span>✅ 已复制</span>
+    </div>
 
     <script>
-        // ==================== 全局变量 ====================
+        // ==================== 状态 ====================
         let passwordHistory = [];
         let totpHistory = [];
         let currentPassword = '';
+        let currentTOTP = '';
         let totpInterval = null;
-        let currentSecret = '';
-
-        // ==================== 工具函数 ====================
-        function showToast(message) {
+        
+        // ==================== 工具 ====================
+        function showToast() {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+            
             setTimeout(() => {
-                toast.classList.remove('show');
-            }, 1000);
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(20px)';
+            }, 2200);
         }
-
+        
         function copyToClipboard(text) {
             if (!text) return;
-            navigator.clipboard.writeText(text).then(() => {
-                showToast('Copied!');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-                showToast('Copied!');
-            });
+            navigator.clipboard.writeText(text).then(showToast);
         }
-
+        
         function formatTime() {
             const now = new Date();
-            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+            return `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
         }
-
-        function addToHistory(historyArray, text, listElement, max = 5) {
+        
+        function addToHistory(history, text, container) {
             const time = formatTime();
-            const existingIndex = historyArray.findIndex(item => item.text === text);
-            if (existingIndex !== -1) {
-                historyArray.splice(existingIndex, 1);
-            }
-
-            historyArray.unshift({ text, time });
-
-            if (historyArray.length > max) {
-                historyArray.pop();
-            }
-
-            renderHistory(historyArray, listElement);
+            const existing = history.findIndex(h => h.text === text);
+            if (existing !== -1) history.splice(existing, 1);
+            
+            history.unshift({ text, time });
+            if (history.length > 5) history.pop();
+            
+            renderHistory(history, container);
         }
-
-        function renderHistory(historyArray, container) {
+        
+        function renderHistory(history, container) {
             container.innerHTML = '';
-
-            if (historyArray.length === 0) {
-                const empty = document.createElement('div');
-                empty.style.textAlign = 'center';
-                empty.style.color = '#94a3b8';
-                empty.style.padding = '20px 0';
-                empty.style.fontSize = '0.9rem';
-                empty.textContent = '暂无记录';
-                container.appendChild(empty);
+            if (history.length === 0) {
+                container.innerHTML = `<div style="text-align:center;color:#64748b;padding:20px 0;font-size:0.95rem;">暂无记录</div>`;
                 return;
             }
-
-            historyArray.forEach(item => {
+            
+            history.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'history-item';
-
-                const content = document.createElement('div');
-                content.style.flex = '1';
-                content.textContent = item.text;
-
-                const time = document.createElement('div');
-                time.className = 'history-time';
-                time.textContent = item.time;
-
-                const copyIcon = document.createElement('button');
-                copyIcon.style.background = 'none';
-                copyIcon.style.border = 'none';
-                copyIcon.style.marginLeft = '12px';
-                copyIcon.style.cursor = 'pointer';
-                copyIcon.style.fontSize = '1.1rem';
-                copyIcon.textContent = '📋';
-
-                div.appendChild(content);
-                div.appendChild(time);
-                div.appendChild(copyIcon);
-
-                div.addEventListener('click', (e) => {
-                    if (e.target !== copyIcon) {
-                        copyToClipboard(item.text);
-                        addToHistory(historyArray, item.text, container);
-                    }
-                });
-
-                copyIcon.addEventListener('click', (e) => {
-                    e.stopImmediatePropagation();
+                div.innerHTML = `
+                    <div class="history-text">${item.text}</div>
+                    <div class="history-time">${item.time}</div>
+                `;
+                
+                div.addEventListener('click', () => {
                     copyToClipboard(item.text);
-                    addToHistory(historyArray, item.text, container);
+                    addToHistory(history, item.text, container);
                 });
-
+                
                 container.appendChild(div);
             });
         }
-
-        // ==================== 密码生成器 ====================
+        
+        // ==================== 密码生成 ====================
         const charSets = {
             upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             lower: 'abcdefghijklmnopqrstuvwxyz',
             numbers: '0123456789',
             special: '!@#$%^&*()_+-=[]{}|;:,.<>/?'
         };
-
-        function generatePassword(length, includeUpper, includeLower, includeNumbers, includeSpecial) {
-            let chars = '';
-            let required = [];
-
-            if (includeUpper) {
-                chars += charSets.upper;
-                required.push(charSets.upper[Math.floor(Math.random() * charSets.upper.length)]);
-            }
-            if (includeLower) {
-                chars += charSets.lower;
-                required.push(charSets.lower[Math.floor(Math.random() * charSets.lower.length)]);
-            }
-            if (includeNumbers) {
-                chars += charSets.numbers;
-                required.push(charSets.numbers[Math.floor(Math.random() * charSets.numbers.length)]);
-            }
-            if (includeSpecial) {
-                chars += charSets.special;
-                required.push(charSets.special[Math.floor(Math.random() * charSets.special.length)]);
-            }
-
-            if (chars.length === 0) {
-                chars = 'abcdefghijklmnopqrstuvwxyz';
-            }
-
-            const array = new Uint8Array(length);
-            crypto.getRandomValues(array);
-
-            let password = '';
-
-            for (let i = 0; i < required.length; i++) {
-                password += required[i];
-            }
-
-            for (let i = required.length; i < length; i++) {
-                const randomIndex = array[i] % chars.length;
-                password += chars[randomIndex];
-            }
-
-            const passwordArray = password.split('');
-            for (let i = passwordArray.length - 1; i > 0; i--) {
-                const j = array[i] % (i + 1);
-                [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
-            }
-
-            return passwordArray.join('');
-        }
-
-        function updatePassword() {
-            const length = parseInt(document.getElementById('length-slider').value);
+        
+        function generatePassword(length) {
             const upper = document.getElementById('upper').checked;
             const lower = document.getElementById('lower').checked;
             const numbers = document.getElementById('numbers').checked;
             const special = document.getElementById('special').checked;
-
-            const checkedCount = [upper, lower, numbers, special].filter(Boolean).length;
-            if (checkedCount === 0) {
-                document.getElementById('lower').checked = true;
+            
+            let chars = '';
+            let mustHave = [];
+            
+            if (upper) { chars += charSets.upper; mustHave.push(charSets.upper[0]); }
+            if (lower) { chars += charSets.lower; mustHave.push(charSets.lower[0]); }
+            if (numbers) { chars += charSets.numbers; mustHave.push(charSets.numbers[0]); }
+            if (special) { chars += charSets.special; mustHave.push(charSets.special[0]); }
+            
+            if (!chars) chars = 'abcdefghijklmnopqrstuvwxyz';
+            
+            const randomValues = new Uint8Array(length);
+            crypto.getRandomValues(randomValues);
+            
+            let password = mustHave.join('');
+            
+            for (let i = mustHave.length; i < length; i++) {
+                password += chars[randomValues[i] % chars.length];
             }
-
-            currentPassword = generatePassword(length, upper, lower, numbers, special);
+            
+            const arr = password.split('');
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = randomValues[i] % (i + 1);
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            
+            return arr.join('');
+        }
+        
+        function updatePassword() {
+            const length = parseInt(document.getElementById('length-slider').value);
+            currentPassword = generatePassword(length);
             document.getElementById('password-text').textContent = currentPassword;
         }
-
-        // ==================== TOTP 实现 ====================
+        
+        // ==================== TOTP ====================
         function base32Decode(input) {
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
             let output = [];
-            let buffer = 0;
-            let bitsLeft = 0;
-
+            let buffer = 0, bitsLeft = 0;
+            
             input = input.toUpperCase().replace(/=+$/, '');
-
-            for (let i = 0; i < input.length; i++) {
-                const char = input[i];
+            
+            for (let char of input) {
                 const val = alphabet.indexOf(char);
                 if (val === -1) continue;
-
                 buffer = (buffer << 5) | val;
                 bitsLeft += 5;
-
                 if (bitsLeft >= 8) {
                     output.push((buffer >> (bitsLeft - 8)) & 0xff);
                     bitsLeft -= 8;
                 }
             }
-
             return new Uint8Array(output);
         }
-
+        
         async function hmacSha1(key, data) {
             const cryptoKey = await crypto.subtle.importKey(
-                'raw',
-                key,
-                { name: 'HMAC', hash: 'SHA-1' },
-                false,
-                ['sign']
+                'raw', key, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign']
             );
-
-            const signature = await crypto.subtle.sign('HMAC', cryptoKey, data);
-            return new Uint8Array(signature);
+            const sig = await crypto.subtle.sign('HMAC', cryptoKey, data);
+            return new Uint8Array(sig);
         }
-
+        
         async function generateTOTP(secret) {
             if (!secret) return '------';
-
             try {
                 const key = base32Decode(secret);
-                const epoch = Math.floor(Date.now() / 1000);
-                const time = Math.floor(epoch / 30);
-
+                const time = Math.floor(Date.now() / 1000 / 30);
                 const timeBuffer = new ArrayBuffer(8);
-                const timeView = new DataView(timeBuffer);
-                timeView.setBigUint64(0, BigInt(time), false);
-
+                new DataView(timeBuffer).setBigUint64(0, BigInt(time), false);
+                
                 const hmac = await hmacSha1(key, timeBuffer);
-
                 const offset = hmac[hmac.length - 1] & 0xf;
-                const binary = ((hmac[offset] & 0x7f) << 24) |
-                              ((hmac[offset + 1] & 0xff) << 16) |
-                              ((hmac[offset + 2] & 0xff) << 8) |
-                              (hmac[offset + 3] & 0xff);
-
-                const otp = binary % 1000000;
-                return otp.toString().padStart(6, '0');
+                
+                const bin = ((hmac[offset] & 0x7f) << 24) |
+                           ((hmac[offset + 1] & 0xff) << 16) |
+                           ((hmac[offset + 2] & 0xff) << 8) |
+                           (hmac[offset + 3] & 0xff);
+                
+                return (bin % 1000000).toString().padStart(6, '0');
             } catch (e) {
-                console.error(e);
                 return 'ERROR';
             }
         }
-
+        
         async function updateTOTP() {
-            const secretInput = document.getElementById('totp-secret').value.trim();
-            currentSecret = secretInput;
-
-            const code = await generateTOTP(secretInput);
-            document.getElementById('totp-code').textContent = code;
+            const secret = document.getElementById('totp-secret').value.trim();
+            const codeEl = document.getElementById('totp-code');
+            const newCode = await generateTOTP(secret);
+            
+            if (newCode !== currentTOTP) {
+                currentTOTP = newCode;
+                codeEl.textContent = newCode;
+                codeEl.classList.add('flash');
+                setTimeout(() => codeEl.classList.remove('flash'), 600);
+            }
         }
-
-        // ---- Fuse bar: replaces numeric countdown, becomes more prominent near 0 ----
-        function updateFuseBar() {
-            const step = 30;
-            const epoch = Math.floor(Date.now() / 1000);
-            const remaining = step - (epoch % step);
-            const fraction = remaining / step;
-
-            const track = document.getElementById('fuse-track');
-            const fill = document.getElementById('fuse-fill');
-
-            fill.style.width = (fraction * 100) + '%';
-
-            let state;
-            if (remaining > 12) state = 'safe';
-            else if (remaining > 5) state = 'warn';
-            else state = 'danger';
-
-            track.classList.remove('safe', 'warn', 'danger');
-            track.classList.add(state);
-
-            const intensity = Math.min(1, Math.max(0, (14 - remaining) / 14));
-            track.style.setProperty('--intensity', intensity.toFixed(2));
+        
+        function updateProgress() {
+            const now = Date.now() / 1000;
+            const progress = ((30 - (now % 30)) / 30) * 100;
+            const bar = document.getElementById('progress-bar');
+            
+            bar.style.width = `${progress}%`;
+            
+            if (progress > 60) {
+                bar.style.background = 'linear-gradient(90deg, #22c55e, #86efac)';
+            } else if (progress > 30) {
+                bar.style.background = 'linear-gradient(90deg, #eab308, #fde047)';
+            } else {
+                bar.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
+            }
+            
+            document.getElementById('time-remaining').textContent = 
+                `${Math.ceil(30 - (now % 30))} 秒后刷新`;
         }
-
-        function startTOTPUpdater() {
+        
+        function startTOTP() {
             if (totpInterval) clearInterval(totpInterval);
-            updateFuseBar();
-
+            
             totpInterval = setInterval(async () => {
                 await updateTOTP();
-                updateFuseBar();
-            }, 1000);
+                updateProgress();
+            }, 800);
+            
+            updateTOTP();
+            updateProgress();
         }
-
+        
         // ==================== 初始化 ====================
-        async function init() {
+        function init() {
             const slider = document.getElementById('length-slider');
-            const lengthValue = document.getElementById('length-value');
-
+            const lengthVal = document.getElementById('length-value');
+            
             slider.addEventListener('input', () => {
-                lengthValue.textContent = slider.value;
+                lengthVal.textContent = slider.value;
                 updatePassword();
             });
-
-            const checkboxes = ['upper', 'lower', 'numbers', 'special'];
-            checkboxes.forEach(id => {
-                document.getElementById(id).addEventListener('change', () => {
-                    updatePassword();
-                });
+            
+            ['upper','lower','numbers','special'].forEach(id => {
+                document.getElementById(id).addEventListener('change', updatePassword);
             });
-
+            
             document.getElementById('generate-btn').addEventListener('click', updatePassword);
-
-            const passwordDisplay = document.getElementById('password-display');
-            passwordDisplay.addEventListener('click', () => {
+            
+            // 密码复制
+            document.getElementById('password-card').addEventListener('click', () => {
                 if (currentPassword) {
                     copyToClipboard(currentPassword);
                     addToHistory(passwordHistory, currentPassword, document.getElementById('password-history'));
                 }
             });
-
-            document.getElementById('copy-password-btn').addEventListener('click', (e) => {
+            
+            document.getElementById('copy-password-btn').addEventListener('click', e => {
                 e.stopImmediatePropagation();
                 if (currentPassword) {
                     copyToClipboard(currentPassword);
                     addToHistory(passwordHistory, currentPassword, document.getElementById('password-history'));
                 }
             });
-
-            const secretInput = document.getElementById('totp-secret');
-            secretInput.addEventListener('input', async () => {
-                await updateTOTP();
+            
+            // TOTP
+            document.getElementById('totp-secret').addEventListener('input', () => {
+                startTOTP();
             });
-
-            const totpDisplay = document.getElementById('totp-display');
-            totpDisplay.addEventListener('click', async () => {
-                const code = document.getElementById('totp-code').textContent;
-                if (code && code.length === 6 && code !== '------') {
-                    copyToClipboard(code);
-                    addToHistory(totpHistory, code, document.getElementById('totp-history'));
+            
+            document.getElementById('copy-totp-btn').addEventListener('click', () => {
+                if (currentTOTP && currentTOTP.length === 6) {
+                    copyToClipboard(currentTOTP);
+                    addToHistory(totpHistory, currentTOTP, document.getElementById('totp-history'));
                 }
             });
-
-            document.getElementById('copy-totp-btn').addEventListener('click', async () => {
-                const code = document.getElementById('totp-code').textContent;
-                if (code && code.length === 6 && code !== '------') {
-                    copyToClipboard(code);
-                    addToHistory(totpHistory, code, document.getElementById('totp-history'));
-                }
-            });
-
+            
+            // 初始化
             updatePassword();
-
-            await updateTOTP();
-            startTOTPUpdater();
-
-            renderHistory(passwordHistory, document.getElementById('password-history'));
-            renderHistory(totpHistory, document.getElementById('totp-history'));
+            renderHistory([], document.getElementById('password-history'));
+            renderHistory([], document.getElementById('totp-history'));
+            
+            startTOTP();
         }
-
+        
         window.onload = init;
     </script>
 </body>
